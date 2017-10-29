@@ -107,8 +107,8 @@ class Spider(Spider):
     def parse_tweets(self, response):
         """ 抓取微博数据 """
         selector = Selector(response)
-        ID = re.findall('(\d+)/profile', response.url)[0]
-        divs = selector.xpath('body/div[@class="c" and @id]')
+        ID = re.findall('(\d+)/profile'.decode('utf-8'), response.url)[0]
+        divs = selector.xpath('body/div[@class="c" and @id]'.decode('utf-8'))
         for div in divs:
             try:
                 tweetsItems = TweetsItem()
@@ -143,7 +143,7 @@ class Spider(Spider):
             except Exception as e:
                 pass
 
-        url_next = selector.xpath('body/div[@class="pa" and @id="pagelist"]/form/div/a[text()="下页"]/@href').extract()
+        url_next = selector.xpath('body/div[@class="pa" and @id="pagelist"]/form/div/a[text()="下页"]/@href'.decode('utf-8')).extract()
         if url_next:
             yield Request(url=self.host + url_next[0], callback=self.parse_tweets, dont_filter=True)
 
