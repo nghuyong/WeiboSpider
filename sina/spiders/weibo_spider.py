@@ -141,6 +141,7 @@ class Spider(Spider):
                         tweetsItems["Tools"] = others[1].replace(u"\xa0", "")
                 yield tweetsItems
             except Exception as e:
+                self.logger.info(e)
                 pass
 
         url_next = selector.xpath('body/div[@class="pa" and @id="pagelist"]/form/div/a[text()="下页"]/@href'.decode('utf-8')).extract()
