@@ -6,7 +6,6 @@ import base64
 from time import sleep
 
 import pymongo
-import requests
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
