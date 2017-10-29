@@ -12,7 +12,7 @@ from sina.items import RelationshipsItem, TweetsItem, InformationItem
 class MongoDBPipeline(object):
     def __init__(self):
         clinet = pymongo.MongoClient("localhost", 27017)
-        db = clinet["Sina_new"]
+        db = clinet["Sina"]
         self.Information = db["Information"]
         self.Tweets = db["Tweets"]
         self.Relationships = db["Relationships"]

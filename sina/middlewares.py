@@ -1,3 +1,4 @@
+# encoding: utf-8
 import random
 from sina.cookies import cookies, init_cookies
 from sina.user_agents import agents

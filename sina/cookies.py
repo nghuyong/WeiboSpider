@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
-# encoding=utf-8
 import datetime
 import json
 import base64
 from time import sleep
 
 import pymongo
-import requests
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -20,15 +18,11 @@ from selenium.webdriver.support import expected_conditions as EC
 或者你也可以把时间间隔调大点。
 """
 WeiBoAccounts = [
-    {'username': 'liujuan86088@163.com', 'password': 'c456123'},
-    {'username': 'as81313477@163.com', 'password': 'huyong123'},
-    {'username': 'qq547778876@163.com', 'password': 'huyong123'},
-    {'username': 'yu4369986@163.com', 'password': 'huyong123'},
-    {'username': 'a331256202@163.com', 'password': 'c456123'},
+{'username': 'liujuan86088@163.com', 'password': '*****'},
 ]
 
 cookies = []
-client = pymongo.MongoClient("139.129.19.240", 27017)
+client = pymongo.MongoClient("localhost", 27017)
 db = client["Sina"]
 userAccount = db["userAccount"]
 
@@ -47,6 +41,8 @@ def get_cookie_from_weibo(username, password):
     login_password.send_keys(password)
     login_button = driver.find_element_by_id("loginAction")
     login_button.click()
+    # 这里停留了10秒观察一下启动的Chrome是否登陆成功了，没有的化手动登陆进去
+    sleep(10)
     cookie = driver.get_cookies()
     driver.close()
     return cookie
