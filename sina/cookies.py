@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-# encoding=utf-8
 import datetime
 import json
 import base64
