@@ -118,7 +118,7 @@ class Spider(Spider):
                 like = re.findall('赞\[(\d+)\]'.decode('utf-8'), div.extract())  # 点赞数
                 transfer = re.findall('转发\[(\d+)\]'.decode('utf-8'), div.extract())  # 转载数
                 comment = re.findall('评论\[(\d+)\]'.decode('utf-8'), div.extract())  # 评论数
-                others = div.xpath('div/span[@class="ct"]/text()').extract()  # 求时间和使用工具（手机或平台）
+                others = div.xpath('div/span[@class="ct"]/text()'.decode('utf-8')).extract()  # 求时间和使用工具（手机或平台）
 
                 tweetsItems["_id"] = ID + "-" + id
                 tweetsItems["ID"] = ID
