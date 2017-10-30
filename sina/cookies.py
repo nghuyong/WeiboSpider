@@ -26,7 +26,7 @@ WeiBoAccounts = [
 ]
 
 cookies = []
-client = pymongo.MongoClient("139.129.19.240", 27017)
+client = pymongo.MongoClient("localhost", 27017)
 db = client["Sina"]
 userAccount = db["userAccount"]
 
