@@ -2,6 +2,7 @@
 This is a sina weibo spider built by scrapy
 
 ## Clone && Use
+Python version: Python3
 ```bash
 git clone https://github.com/SimpleBrightMan/WeiboSpider.git
 # first get cookies and save them into database
