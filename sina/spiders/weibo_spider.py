@@ -57,7 +57,7 @@ class Spider(Spider):
                     birthday = datetime.datetime.strptime(birthday[0], "%Y-%m-%d")
                     informationItem["Birthday"] = birthday - datetime.timedelta(hours=8)
                 except Exception:
-                    informationItem['Birthday'] = birthday[0]   # 有可能是星座，而非时间
+                    informationItem['Birthday'] = birthday[0]  # 有可能是星座，而非时间
             if sexOrientation and sexOrientation[0]:
                 if sexOrientation[0].replace(u"\xa0", "") == gender[0]:
                     informationItem["SexOrientation"] = "同性恋"
@@ -77,7 +77,7 @@ class Spider(Spider):
                 new_ck = {}
                 for ck in response.request.cookies:
                     new_ck[ck['name']] = ck['value']
-                r = requests.get(urlothers, cookies=new_ck, timeout = 5)
+                r = requests.get(urlothers, cookies=new_ck, timeout=5)
                 if r.status_code == 200:
                     selector = etree.HTML(r.content)
                     texts = ";".join(selector.xpath('//body//div[@class="tip2"]/a//text()'))
@@ -97,11 +97,12 @@ class Spider(Spider):
             pass
         else:
             yield informationItem
-        if int(num_tweets[0]) < 5000:
-            yield Request(url="https://weibo.cn/%s/profile?filter=1&page=1" % ID, callback=self.parse_tweets, dont_filter=True)
-        if int(num_follows[0]) < 500:
+        if informationItem["Num_Tweets"] and informationItem["Num_Tweets"] < 5000:
+            yield Request(url="https://weibo.cn/%s/profile?filter=1&page=1" % ID, callback=self.parse_tweets,
+                          dont_filter=True)
+        if informationItem["Num_Follows"] and informationItem["Num_Follows"] < 500:
             yield Request(url="https://weibo.cn/%s/follow" % ID, callback=self.parse_relationship, dont_filter=True)
-        if int(num_fans[0]) < 500:
+        if informationItem["Num_Fans"] and informationItem["Num_Fans"] < 500:
             yield Request(url="https://weibo.cn/%s/fans" % ID, callback=self.parse_relationship, dont_filter=True)
 
     def parse_tweets(self, response):
@@ -169,4 +170,3 @@ class Spider(Spider):
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
             yield Request(url=self.host + next_url[0], callback=self.parse_relationship, dont_filter=True)
-
