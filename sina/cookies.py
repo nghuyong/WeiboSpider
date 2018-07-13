@@ -41,6 +41,8 @@ def get_cookie_from_weibo(username, password):
     login_password.send_keys(password)
     login_button = driver.find_element_by_id("loginAction")
     login_button.click()
+    # 这里停留了10秒观察一下启动的Chrome是否登陆成功了，没有的化手动登陆进去
+    sleep(10)
     cookie = driver.get_cookies()
     driver.close()
     return cookie
