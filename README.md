@@ -21,7 +21,7 @@ This is a sina weibo spider built by scrapy
 
 如果确实有抓取数据的需要，可以联系我，Email：nghuyong@163.com
 
-## Clone && Use
+## 使用本项目
 Python版本:Python3.6
 ```bash
 git clone https://github.com/SimpleBrightMan/WeiboSpider.git
