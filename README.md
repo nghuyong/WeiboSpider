@@ -22,7 +22,7 @@ This is a sina weibo spider built by scrapy
 如果确实有抓取数据的需要，可以联系我，Email：nghuyong@163.com
 
 ## Clone && Use
-Python version: Python3
+Python版本:Python3.6
 ```bash
 git clone https://github.com/SimpleBrightMan/WeiboSpider.git
 # 首先获取cookie，并存入数据库中
@@ -31,5 +31,5 @@ python cookies.py
 python run.py
 ```
 
-## More information
+## 更多信息
 [微博爬虫，每日百万级数据](http://blog.nghuyong.top/2017/10/29/spider/%E5%BE%AE%E5%8D%9A%E7%88%AC%E8%99%AB/)
