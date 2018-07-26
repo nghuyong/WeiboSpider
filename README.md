@@ -17,7 +17,7 @@ This is a sina weibo spider built by scrapy
 
 这样一分钟抓取5000条微博，**每天数据采集量就在700万～800万**
 
-这个账号池。我也是花钱买的，不Share给大家了。
+这个账号池，我也是花钱买的，就不Share了。
 
 如果确实有抓取数据的需要，可以联系我，Email：nghuyong@163.com
 
