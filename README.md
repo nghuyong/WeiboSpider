@@ -11,11 +11,9 @@ This is a sina weibo spider built by scrapy
 
 购买微博账号的地址是[这里](http://www.xiaohao.shop/)，访问需要翻墙。
 
-![](http://wx1.sinaimg.cn/mw690/006Ueclxly1ftnejuexllj31cq0ce7a1.jpg)
+![](http://wx3.sinaimg.cn/mw690/006Ueclxly1ftoh9t49z3j31jw0ie77z.jpg)
 
-目前我自己维护了一个200+个账号的账号池，抓取效果如上图，每分钟可以抓取接近500页面，一般一个页面10条微博，
-
-这样一分钟抓取5000条微博，**每天数据采集量就在700万～800万**
+目前我自己维护了一个200+个账号的账号池，抓取效果如上图，**一分钟可以抓取8000左右的数据，一天数据采集量在1100万**
 
 这个账号池，我也是花钱买的，就不Share了。
 
