@@ -1,7 +1,7 @@
 # WeiboSpider
 This is a sina weibo spider built by scrapy
 
-## Update 2018/7/26
+## Update 2018/7/27
 这个爬虫一开始是需要登陆获得微博cookie的，然后再运行爬虫
 
 如果你的账号是买的，微博判定不是正常账号，会出现滑动宫格验证码，本项目中获取cookie的方案就不适用了，
