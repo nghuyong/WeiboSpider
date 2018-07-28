@@ -1,6 +1,10 @@
 # WeiboSpider
 This is a sina weibo spider built by scrapy
 
+## Update 2018/7/28
+
+**戳这里：[微博爬虫，单机每日千万级的数据 && 吐血整理的微博爬虫总结](https://blog.csdn.net/nghuyong/article/details/81251948)**
+
 ## Update 2018/7/27
 这个爬虫一开始是需要登陆获得微博cookie的，然后再运行爬虫
 
@@ -28,6 +32,3 @@ python cookies.py
 # 然后运行爬虫
 python run.py
 ```
-
-## 更多信息
-**戳这里[微博爬虫，单机每日千万级的数据 && 吐血整理的微博爬虫总结](https://blog.csdn.net/nghuyong/article/details/81251948)**
