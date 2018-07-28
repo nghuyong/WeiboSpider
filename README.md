@@ -30,4 +30,4 @@ python run.py
 ```
 
 ## 更多信息
-[微博爬虫，每日百万级数据](http://blog.nghuyong.top/2017/10/29/spider/%E5%BE%AE%E5%8D%9A%E7%88%AC%E8%99%AB/)
+**戳这里[微博爬虫，单机每日千万级的数据 && 吐血整理的微博爬虫总结](https://blog.csdn.net/nghuyong/article/details/81251948)**
