@@ -10,18 +10,19 @@ This is a sina weibo spider built by scrapy
 
 |    分支   | 特点 | 单机每日抓取量 |
 | :---: | :----: |:----: |
-| simple | 单账号 | 十万级|
-| master | 账号池 | 百万级|
-| senior | 账号池+分布式 | 千万级+ | 
+| [simple](https://github.com/nghuyong/WeiboSpider/tree/simple) | 单账号 | 十万级|
+| [master](https://github.com/nghuyong/WeiboSpider/tree/master) | 账号池 | 百万级|
+| [senior](https://github.com/nghuyong/WeiboSpider/tree/senior) | 账号池+分布式 | 千万级+ | 
+
 
 该项目爬取的数据字段说明，请移步:[数据字段说明与示例](./data_stracture.md)
 
 ## 如何使用
 下面是master分支，也就是构建单机百万级的爬虫
 
-如果你只想用你自己的一个账号简单爬取微博，每日十万级即可，请移步simple分支
+如果你只想用你自己的一个账号简单爬取微博，每日十万级即可，请移步[simple分支](https://github.com/nghuyong/WeiboSpider/tree/simple)
 
-如果你需要大规模爬取微博，需要单机千万级别，请移步senior分支
+如果你需要大规模爬取微博，需要单机千万级别，请移步[senior分支](https://github.com/nghuyong/WeiboSpider/tree/senior)
 
 ### 克隆本项目 && 安装依赖
 本项目Python版本为Python3.6
