@@ -116,6 +116,10 @@ python sina/account_build/login.py
 
 ![](./images/account_build_screenshot.png)
 
+这是你的mongodb中将多一个账号表，如下所示:
+
+![](./images/account.png)
+
 ### 运行爬虫
 ```bash
 scrapy crawl weibo_spider 
