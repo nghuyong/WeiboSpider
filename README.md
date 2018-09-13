@@ -14,7 +14,7 @@ This is a sina weibo spider built by scrapy
 | master | 账号池 | 百万级|
 | senior | 账号池+分布式 | 千万级+ | 
 
-该项目爬取的数据字段说明，请移步:[数据字段说明](./data_stracture.md)
+该项目爬取的数据字段说明，请移步:[数据字段说明与示例](./data_stracture.md)
 
 ## 如何使用
 下面是master分支，也就是构建单机百万级的爬虫
