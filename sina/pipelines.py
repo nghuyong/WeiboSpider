@@ -1,37 +1,37 @@
 # -*- coding: utf-8 -*-
-
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import pymongo
-
-from sina.items import RelationshipsItem, TweetsItem, InformationItem
+from pymongo.errors import DuplicateKeyError
+from sina.items import RelationshipsItem, TweetsItem, InformationItem, CommentItem
+from sina.settings import LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
 
 
 class MongoDBPipeline(object):
     def __init__(self):
-        clinet = pymongo.MongoClient("localhost", 27017)
-        db = clinet["Sina"]
+        client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
+        db = client[DB_NAME]
         self.Information = db["Information"]
         self.Tweets = db["Tweets"]
+        self.Comments = db["Comments"]
         self.Relationships = db["Relationships"]
 
     def process_item(self, item, spider):
         """ 判断item的类型，并作相应的处理，再入数据库 """
         if isinstance(item, RelationshipsItem):
-            try:
-                self.Relationships.insert(dict(item))
-            except Exception:
-                pass
+            self.insert_item(self.Relationships, item)
         elif isinstance(item, TweetsItem):
-            try:
-                self.Tweets.insert(dict(item))
-            except Exception:
-                pass
+            self.insert_item(self.Tweets, item)
         elif isinstance(item, InformationItem):
-            try:
-                self.Information.insert(dict(item))
-            except Exception:
-                pass
+            self.insert_item(self.Information, item)
+        elif isinstance(item, CommentItem):
+            self.insert_item(self.Comments, item)
         return item
+
+    @staticmethod
+    def insert_item(collection, item):
+        try:
+            collection.insert(dict(item))
+        except DuplicateKeyError:
+            """
+            说明有重复数据
+            """
+            pass
