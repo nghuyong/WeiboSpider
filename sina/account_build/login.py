@@ -189,7 +189,7 @@ class WeiboLogin():
 if __name__ == '__main__':
     # 在目录中新建一个account.txt文件，格式需要与account_sample.txt相同
     # 其实就是把www.xiaohao.shop买的账号复制到新建的account.txt文件中
-    file_path = os.getcwd() + '/sina/account_build/account_sample.txt'
+    file_path = os.getcwd() + '/sina/account_build/account.txt'
     with open(file_path, 'r') as f:
         lines = f.readlines()
     mongo_client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
