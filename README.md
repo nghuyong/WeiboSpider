@@ -18,11 +18,7 @@ This is a sina weibo spider built by scrapy
 该项目爬取的数据字段说明，请移步:[数据字段说明与示例](./data_stracture.md)
 
 ## 如何使用
-下面是master分支，也就是构建单机百万级的爬虫
-
-如果你只想用你自己的一个账号简单爬取微博，每日十万级即可，请移步[simple分支](https://github.com/nghuyong/WeiboSpider/tree/simple)
-
-如果你需要大规模爬取微博，需要单机千万级别，请移步[senior分支](https://github.com/nghuyong/WeiboSpider/tree/senior)
+下面是senior分支，也就是构建单机千万级别的爬虫
 
 ### 克隆本项目 && 安装依赖
 本项目Python版本为Python3.6
@@ -31,7 +27,7 @@ git clone git@github.com:nghuyong/WeiboSpider.git
 cd WeiboSpider
 pip install -r requirements.txt
 ```
-除此之外，还需要安装mongodb和phantomjs，这个自行Google把
+除此之外，还需要安装mongodb，phantomjs和redis，这个自行Google把
 
 ### 购买账号
 小号购买地址(**访问需要翻墙**): http://www.xiaohao.shop/ 
@@ -57,16 +53,48 @@ python sina/account_build/login.py
 
 ![](./images/account.png)
 
+
+### 初始化redis
+分布式爬虫是所有的爬虫都从redis中获取URL
+
+所以首先向redis中填充初始的URL
+
+```bash
+python sina/redis_init.py
+```
+
 ### 运行爬虫
 ```bash
 scrapy crawl weibo_spider 
 ```
+可以打开新的终端，开多个进程。
+
 运行截图:
 
-![](./images/spider.png)
+![](./images/redis.png)
 
 导入pycharm后，也可以直接执行`sina/spider/weibo_spider.py`
 
 该爬虫是示例爬虫，将爬取 人民日报 和 新华视点 的 用户信息，全部微博，每条微博的评论，还有用户关系。
 
 可以根据你的实际需求改写示例爬虫。
+
+## 速度说明
+
+一个页面可以抓取10则微博数据
+
+下表是我的配置情况和速度测试结果
+
+|    爬虫配置   | 配置值 |
+| :---: | :----: |
+| 账号池大小  | 200+ |
+| 单个爬虫 CONCURRENT_REQUESTS | 16 |
+| 单个爬虫 DOWNLOAD_DELAY | 0.1s|
+| 单个爬虫每分钟抓取网页量 | 250+ |
+| 单个爬虫每分钟抓取数据量 | 2500+ |
+| 爬虫进程数  | 8 |
+| 总体每分钟抓取网页量 | 2000+ | 
+| 总体每分钟抓取数据量 | 20000+ |
+| 总体一天抓取数据量 | **2880万+** |
+
+实际速度和你自己电脑的网速/CPU/内存有很大关系。

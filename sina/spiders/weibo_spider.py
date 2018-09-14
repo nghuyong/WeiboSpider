@@ -2,29 +2,31 @@
 # encoding: utf-8
 import re
 from lxml import etree
-from scrapy import Spider
 from scrapy.crawler import CrawlerProcess
 from scrapy.selector import Selector
 from scrapy.http import Request
 from scrapy.utils.project import get_project_settings
+from scrapy_redis.spiders import RedisSpider
 from sina.items import TweetsItem, InformationItem, RelationshipsItem, CommentItem
 from sina.spiders.utils import time_fix
 import time
 
 
-class WeiboSpider(Spider):
+class WeiboSpider(RedisSpider):
     name = "weibo_spider"
     base_url = "https://weibo.cn"
+    edis_key = "weibo_spider:start_urls"
 
-    def start_requests(self):
-        start_uids = [
-            '2803301701',  # 人民日报
-            '1699432410'  # 新华社
-        ]
-        for uid in start_uids:
-            yield Request(url="https://weibo.cn/%s/info" % uid, callback=self.parse_information)
-
-    def parse_information(self, response):
+    custom_settings = {
+        'CONCURRENT_REQUESTS': 16,
+        "DOWNLOAD_DELAY": 0.1,
+        "SCHEDULER": "scrapy_redis.scheduler.Scheduler",
+        "DUPEFILTER_CLASS": "scrapy_redis.dupefilter.RFPDupeFilter",
+        "SCHEDULER_PERSIST": True,
+    }
+    
+    # 默认初始解析函数
+    def parse(self, response):
         """ 抓取个人信息 """
         information_item = InformationItem()
         information_item['crawl_time'] = int(time.time())
@@ -34,7 +36,7 @@ class WeiboSpider(Spider):
         nick_name = re.findall('昵称;?[：:]?(.*?);', text1)
         gender = re.findall('性别;?[：:]?(.*?);', text1)
         place = re.findall('地区;?[：:]?(.*?);', text1)
-        briefIntroduction = re.findall('简介;[：:]?(.*?);', text1)
+        brief_introduction = re.findall('简介;[：:]?(.*?);', text1)
         birthday = re.findall('生日;?[：:]?(.*?);', text1)
         sex_orientation = re.findall('性取向;?[：:]?(.*?);', text1)
         sentiment = re.findall('感情状况;?[：:]?(.*?);', text1)
@@ -49,8 +51,8 @@ class WeiboSpider(Spider):
             information_item["province"] = place[0]
             if len(place) > 1:
                 information_item["city"] = place[1]
-        if briefIntroduction and briefIntroduction[0]:
-            information_item["brief_introduction"] = briefIntroduction[0].replace(u"\xa0", "")
+        if brief_introduction and brief_introduction[0]:
+            information_item["brief_introduction"] = brief_introduction[0].replace(u"\xa0", "")
         if birthday and birthday[0]:
             information_item['birthday'] = birthday[0]
         if sex_orientation and sex_orientation[0]:

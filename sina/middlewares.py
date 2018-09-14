@@ -37,7 +37,7 @@ class RedirectMiddleware(object):
 
     def process_response(self, request, response, spider):
         http_code = response.status
-        if http_code == 302:
+        if http_code == 302 or http_code == 403:
             self.account_collection.find_one_and_update({'_id': request.meta['account']['_id']},
                                                         {'$set': {'status': 'error'}}, )
             return request
