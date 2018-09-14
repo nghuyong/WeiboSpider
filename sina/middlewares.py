@@ -27,7 +27,7 @@ class CookieMiddleware(object):
 class RedirectMiddleware(object):
     """
     检测账号是否正常
-    302,说明账号cookie失效，状态标记为error
+    302 / 403,说明账号cookie失效/账号被封，状态标记为error
     418,偶尔产生,需要再次请求
     """
 
