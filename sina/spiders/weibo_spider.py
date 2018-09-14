@@ -235,7 +235,7 @@ class WeiboSpider(Spider):
             comment_item['content'] = comment_node.xpath('.//span[@class="ctt"]').xpath('string(.)').extract_first()
             comment_item['_id'] = comment_node.xpath('./@id').extract_first()
             created_at = comment_node.xpath('.//span[@class="ct"]/text()').extract_first()
-            comment_item['created_at'] = created_at.split('\xa0')[0]
+            comment_item['created_at'] = time_fix(created_at.split('\xa0')[0])
             yield comment_item
 
 
