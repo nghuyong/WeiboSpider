@@ -1,7 +1,7 @@
 # WeiboSpider
 This is a sina weibo spider built by scrapy
 
-**这是一个持续维护的微博开源项目,有任何问题请开issue**
+**这是一个持续维护的微博爬虫开源项目,有任何问题请开issue**
 
 更多关于微博爬虫的介绍请移步:[微博爬虫总结：构建单机千万级别的微博爬虫系统](http://www.nghuyong.top/2018/09/12/spider/%E5%BE%AE%E5%8D%9A%E7%88%AC%E8%99%AB%E6%80%BB%E7%BB%93%EF%BC%9A%E6%9E%84%E5%BB%BA%E5%8D%95%E6%9C%BA%E5%8D%83%E4%B8%87%E7%BA%A7%E5%88%AB%E7%9A%84%E5%BE%AE%E5%8D%9A%E7%88%AC%E8%99%AB%E7%B3%BB%E7%BB%9F/)
 
