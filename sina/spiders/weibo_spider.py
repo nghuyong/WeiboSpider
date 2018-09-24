@@ -87,7 +87,7 @@ class WeiboSpider(RedisSpider):
         yield information_item
 
         # 获取该用户微博
-        yield Request(url=self.base_url + '/{}?page=1'.format(information_item['_id']), callback=self.parse_tweet,
+        yield Request(url=self.base_url + '/{}/profile?page=1'.format(information_item['_id']), callback=self.parse_tweet,
                       priority=1)
 
         # 获取关注列表
