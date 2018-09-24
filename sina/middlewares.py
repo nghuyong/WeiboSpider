@@ -16,10 +16,20 @@ class CookieMiddleware(object):
 
     def process_request(self, request, spider):
         all_count = self.account_collection.find({'status': 'success'}).count()
-        if all_count == 0:
-            raise Exception('当前账号池为空')
+        if_use_success = True
+        if all_count==0:
+            print('也许没标注这个账号好不好用？我试试拿所有的账号吧。')
+            all_count = self.account_collection.count()
+            if_use_success = False
+        assert all_count>0, '账号池为空。'
+        print('有这么%d个账号可以用。' % all_count)
+        # Now take a random account:
         random_index = random.randint(0, all_count - 1)
-        random_account = self.account_collection.find({'status': 'success'})[random_index]
+        if if_use_success:
+            cursor = self.account_collection.find({'status': 'success'})
+        else: # use all:
+            cursor = self.account_collection.find()
+        random_account = cursor[random_index]
         request.headers.setdefault('Cookie', random_account['cookie'])
         request.meta['account'] = random_account
 
