@@ -72,7 +72,7 @@ class WeiboSpider(RedisSpider):
                       callback=self.parse_further_information,
                       meta=request_meta, dont_filter=True, priority=1)
 
-    def parse_further_information(self, response, if_get_posts=True, if_get_followers=False, if_get_followees=False):
+    def parse_further_information(self, response, if_get_posts=True, if_get_followers=True, if_get_followees=True):
         text = response.text
         information_item = response.meta['item']
         tweets_num = re.findall('微博\[(\d+)\]', text)
@@ -190,6 +190,7 @@ class WeiboSpider(RedisSpider):
             relationships_item["followed_id"] = uid
             relationships_item["_id"] = ID + '-' + uid
             yield relationships_item
+            yield Request(url="https://weibo.cn/%s/info" % uid, callback=self.parse)
 
     def parse_fans(self, response):
         """
@@ -214,6 +215,7 @@ class WeiboSpider(RedisSpider):
             relationships_item["followed_id"] = ID
             relationships_item["_id"] = uid + '-' + ID
             yield relationships_item
+            yield Request(url="https://weibo.cn/%s/info" % uid, callback=self.parse)
 
     def parse_comment(self, response):
         # 如果是第1页，一次性获取后面的所有页
