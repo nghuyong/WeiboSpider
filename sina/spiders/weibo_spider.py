@@ -139,43 +139,46 @@ class WeiboSpider(RedisSpider):
                 try:
                     tweet_item = TweetsItem()
                     tweet_item['crawl_time'] = int(time.time())
+
+                    # Parse user id and post id, both required:
                     tweet_repost_url = tweet_node.xpath('.//a[contains(text(),"转发[")]/@href')[0]
                     user_tweet_id = self.IDs_in_url_p.search(tweet_repost_url)
-                    if user_tweet_id is None: 
-                        self.logger.warning('Cannot parse user id and post id from the URL. Skipping.')
-                        continue
+                    assert len(user_tweet_id)==2, 'Cannot parse user id and post id from the URL. Skipping.'
                     tweet_item['weibo_url'] = 'https://weibo.com/{}/{}'.format(user_tweet_id.group(2),
                                                                                user_tweet_id.group(1))
                     tweet_item['user_id'] = user_tweet_id.group(2)
                     tweet_item['_id'] = '{}_{}'.format(user_tweet_id.group(2), user_tweet_id.group(1))
-                    create_time_info = tweet_node.xpath('.//span[@class="ct" and contains(text(),"来自")]/text()')[0]
-                    tweet_item['created_at'] = time_fix(create_time_info.split('来自')[0].strip())
 
-                    like_num = tweet_node.xpath('.//a[contains(text(),"赞")]/text()')[0]
-                    tweet_item['like_num'] = int(self.integer_p.search(like_num).group())
+                    # Parse optional fields:
+                    try:
+                        create_time_info = tweet_node.xpath('.//span[@class="ct" and contains(text(),"来自")]/text()')[0]
+                        tweet_item['created_at'] = time_fix(create_time_info.split('来自')[0].strip())
+                    except: pass
+                    try:
+                        n = tweet_node.xpath('.//a[contains(text(),"赞")]/text()')[0]
+                        tweet_item['like_num'] = int(self.integer_p.search(n))
+                    except: pass
+                    try:
+                        n = tweet_node.xpath('.//a[contains(text(),"转发")]/text()')[0]
+                        tweet_item['repost_num'] = int(self.integer_p.search(n))
+                    except: pass
+                    try:
+                        n = tweet_node.xpath('.//a[contains(text(),"评论") and not(contains(text(),"原文"))]/text()')[0]
+                        tweet_item['comment_num'] = int(self.integer_p.search(n))
+                    except: pass
 
-                    repost_num = tweet_node.xpath('.//a[contains(text(),"转发")]/text()')[0]
-                    tweet_item['repost_num'] = int(self.integer_p.search(repost_num).group())
-
-                    comment_num = tweet_node.xpath(
-                        './/a[contains(text(),"评论") and not(contains(text(),"原文"))]/text()')[0]
-                    tweet_item['comment_num'] = int(self.integer_p.search(comment_num).group())
-
+                    # If full text is hidden, reveal on-demand:
                     tweet_content_node = tweet_node.xpath('.//span[@class="ctt"]')[0]
-
-                    # 检测由没有阅读全文:
                     all_content_link = tweet_content_node.xpath('.//a[text()="全文"]')
                     if all_content_link:
                         all_content_url = self.base_url + all_content_link[0].xpath('./@href')[0]
-                        yield Request(all_content_url, callback=self.parse_all_content, meta={'item': tweet_item},
-                                      priority=1)
-
+                        yield Request(all_content_url, callback=self.parse_all_content, meta={'item': tweet_item}, priority=1)
                     else:
                         all_content = tweet_content_node.xpath('string(.)').strip('\u200b')
                         tweet_item['content'] = all_content
                         yield tweet_item
 
-                    if if_get_comments:# 抓取该微博的评论信息
+                    if if_get_comments: # 抓取该微博的评论信息
                         comment_url = self.base_url + '/comment/' + tweet_item['weibo_url'].split('/')[-1]
                         yield Request(url=comment_url, callback=self.parse_comment, meta={'weibo_url': tweet_item['weibo_url']})
 
@@ -184,7 +187,7 @@ class WeiboSpider(RedisSpider):
                     self.logger.error(format_exc())
 
     def parse_all_content(self, response):
-        # 有阅读全文的情况，获取全文
+        '''有阅读全文的情况，获取全文'''
         tree_node = etree.HTML(response.body)
         tweet_item = response.meta['item']
         content_node = tree_node.xpath('//div[@id="M_"]//span[@class="ctt"]')[0]
@@ -257,8 +260,7 @@ class WeiboSpider(RedisSpider):
         comment_nodes = selector.xpath('//div[@class="c" and contains(@id,"C_")]')
         for comment_node in comment_nodes:
             comment_user_url = comment_node.xpath('.//a[contains(@href,"/u/")]/@href').extract_first()
-            if not comment_user_url:
-                continue
+            if not comment_user_url: continue
             comment_item = CommentItem()
             comment_item['crawl_time'] = int(time.time())
             comment_item['weibo_url'] = response.meta['weibo_url']
