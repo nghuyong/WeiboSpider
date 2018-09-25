@@ -11,6 +11,11 @@ DEFAULT_REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:61.0) Gecko/20100101 Firefox/61.0',
 }
 
+# Set logger:
+LOG_LEVEL = 'ERROR'  # to only display errors
+LOG_FORMAT = '%(asctime)24s %(name)8s %(levelname)8s | %(message)s'
+LOG_FILE = 'log.txt'
+
 # CONCURRENT_REQUESTS 和 DOWNLOAD_DELAY 根据账号池大小调整 目前的参数是账号池大小为200
 
 CONCURRENT_REQUESTS = 16
