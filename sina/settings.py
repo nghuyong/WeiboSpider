@@ -12,9 +12,9 @@ DEFAULT_REQUEST_HEADERS = {
 }
 
 # Set logger:
-LOG_LEVEL = 'ERROR'  # to only display errors
+LOG_LEVEL = 'WARNING'  # to only display errors
 LOG_FORMAT = '%(asctime)24s %(name)8s %(levelname)8s | %(message)s'
-LOG_FILE = 'log.txt'
+#LOG_FILE = 'log.txt'
 
 # CONCURRENT_REQUESTS 和 DOWNLOAD_DELAY 根据账号池大小调整 目前的参数是账号池大小为200
 
