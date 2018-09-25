@@ -18,11 +18,10 @@ class CookieMiddleware(object):
         all_count = self.account_collection.find({'status': 'success'}).count()
         if_use_success = True
         if all_count==0:
-            print('也许没标注这个账号好不好用？我试试拿所有的账号吧。')
+            #print('也许没标注这个账号好不好用？我试试拿所有的账号吧。')
             all_count = self.account_collection.count()
             if_use_success = False
-        assert all_count>0, '账号池为空。'
-        print('有这么%d个账号可以用。' % all_count)
+        #print('有这么%d个账号可以用。' % all_count)
         # Now take a random account:
         random_index = random.randint(0, all_count - 1)
         if if_use_success:
