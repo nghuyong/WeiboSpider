@@ -14,7 +14,7 @@ for key in r.scan_iter("weibo_spider*"):
 
 try:
     import pandas as pd
-    start_uids = pd.read_csv('UIDs_to_scrape.csv').uid
+    start_uids = pd.read_csv('sina/UIDs_to_scrape.csv').uid
 except:
     start_uids = [
         '2803301701',  # 人民日报
