@@ -72,7 +72,7 @@ class WeiboSpider(RedisSpider):
                       callback=self.parse_further_information,
                       meta=request_meta, dont_filter=True, priority=1)
 
-    def parse_further_information(self, response):
+    def parse_further_information(self, response, if_get_posts=True, if_get_followers=False, if_get_followees=False):
         text = response.text
         information_item = response.meta['item']
         tweets_num = re.findall('微博\[(\d+)\]', text)
@@ -87,19 +87,19 @@ class WeiboSpider(RedisSpider):
         yield information_item
 
         # 获取该用户微博
-        yield Request(url=self.base_url + '/{}/profile?page=1'.format(information_item['_id']), callback=self.parse_tweet,
-                      priority=1)
+        if if_get_posts:
+            yield Request(url=self.base_url + '/{}/profile?page=1'.format(information_item['_id']), callback=self.parse_tweet, priority=1)
 
         # 获取关注列表
-        yield Request(url=self.base_url + '/{}/follow?page=1'.format(information_item['_id']),
-                      callback=self.parse_follow,
-                      dont_filter=True)
+        if if_get_followees:
+            yield Request(url=self.base_url + '/{}/follow?page=1'.format(information_item['_id']),
+                          callback=self.parse_follow, dont_filter=True)
         # 获取粉丝列表
-        yield Request(url=self.base_url + '/{}/fans?page=1'.format(information_item['_id']),
-                      callback=self.parse_fans,
-                      dont_filter=True)
+        if if_get_followers:
+            yield Request(url=self.base_url + '/{}/fans?page=1'.format(information_item['_id']),
+                          callback=self.parse_fans, dont_filter=True)
 
-    def parse_tweet(self, response):
+    def parse_tweet(self, response, if_get_comments=False):
         if response.url.endswith('page=1'):
             # 如果是第1页，一次性获取后面的所有页
             all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
@@ -151,9 +151,9 @@ class WeiboSpider(RedisSpider):
                     tweet_item['content'] = all_content
                     yield tweet_item
 
-                # 抓取该微博的评论信息
-                comment_url = self.base_url + '/comment/' + tweet_item['weibo_url'].split('/')[-1]
-                yield Request(url=comment_url, callback=self.parse_comment, meta={'weibo_url': tweet_item['weibo_url']})
+                if if_get_comments:# 抓取该微博的评论信息
+                    comment_url = self.base_url + '/comment/' + tweet_item['weibo_url'].split('/')[-1]
+                    yield Request(url=comment_url, callback=self.parse_comment, meta={'weibo_url': tweet_item['weibo_url']})
 
             except Exception as e:
                 self.logger.error(e)
