@@ -71,7 +71,7 @@ scrapy crawl weibo_spider
 
 运行截图:
 
-![](./images/redis.png)
+![](./images/Screen Shot.png)
 
 导入pycharm后，也可以直接执行`sina/spider/weibo_spider.py`
 
