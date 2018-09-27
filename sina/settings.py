@@ -12,17 +12,18 @@ DEFAULT_REQUEST_HEADERS = {
 }
 
 # Set logger:
-LOG_LEVEL = 'WARNING'  # to only display errors
-LOG_FORMAT = '%(asctime)24s %(name)8s %(levelname)8s | %(message)s'
+LOG_LEVEL = 'INFO'  # to only display errors
+LOG_FORMAT = '%(asctime)19s %(name)16s %(levelname)8s | %(message)s'
 #LOG_FILE = 'log.txt'
 
 # CONCURRENT_REQUESTS 和 DOWNLOAD_DELAY 根据账号池大小调整 目前的参数是账号池大小为200
 
-CONCURRENT_REQUESTS = 16
+CONCURRENT_REQUESTS = 128
 
-DOWNLOAD_DELAY = 0.1
+DOWNLOAD_DELAY = 0.01
 
 DOWNLOADER_MIDDLEWARES = {
+	'scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware': 0,
     'weibo.middlewares.UserAgentMiddleware': None,
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
     'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': None,
@@ -34,6 +35,8 @@ ITEM_PIPELINES = {
     'sina.pipelines.MongoDBPipeline': 300,
 }
 
+HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.DbmCacheStorage'
+
 # MongoDb 配置
 
 LOCAL_MONGO_HOST = '127.0.0.1'
@@ -43,3 +46,19 @@ DB_NAME = 'Sina'
 # Redis 配置
 LOCAL_REDIS_HOST = '127.0.0.1'
 LOCAL_REDIS_PORT = 6379
+
+
+# Ensure use this Scheduler
+SCHEDULER = "scrapy_redis_bloomfilter.scheduler.Scheduler"
+
+# Ensure all spiders share same duplicates filter through redis
+DUPEFILTER_CLASS = "scrapy_redis_bloomfilter.dupefilter.RFPDupeFilter"
+
+# Number of Hash Functions to use, defaults to 6
+BLOOMFILTER_HASH_NUMBER = 6
+
+# Redis Memory Bit of Bloomfilter Usage, 30 means 2^30 = 128MB, defaults to 30
+BLOOMFILTER_BIT = 31
+
+# Persist
+SCHEDULER_PERSIST = True
