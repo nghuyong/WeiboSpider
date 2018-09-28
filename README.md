@@ -1,4 +1,7 @@
 # WeiboSpider
+
+![Screen Shot](https://ws4.sinaimg.cn/large/006tNc79ly1fvp0xwknxvj31gx0q7duh.jpg)
+
 This is a sina weibo spider built by [nghuyong][] largely tailored to run on [WWBP](http://wwbp.org)'s servers by [Mingyang Li](http://seas.upenn.edu/~myli).
 
 [nghuyong]: https://github.com/nghuyong
