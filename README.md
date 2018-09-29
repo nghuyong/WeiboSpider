@@ -32,3 +32,13 @@ The original repo by [nghuyong][] has 3 branches:
 4. Populate the account pool by running `python sina/account_build/login.py`.
 5. Populate URLs to start scraping with by issuing `python sina/redis_init.py`.
 5. Run scraper by running `scrapy crawl weibo_spider`.
+
+## Data Storage
+
+Posts, user profiles, and user relationships (and comments optionally) are stored in the MongoDB.
+
+## Performance
+
+![](https://ws2.sinaimg.cn/large/006tNc79ly1fvqx0yrnd3j31am0qojz8.jpg)
+
+With the default setting, 16GB memory, 8-core CPU, Ubuntu, and 36 processes, we are hitting an average of 2,000 posts per second.
