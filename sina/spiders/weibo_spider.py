@@ -150,7 +150,7 @@ class WeiboSpider(Spider):
                     yield tweet_item
 
                 # 抓取该微博的评论信息
-                comment_url = self.base_url + '/comment/' + tweet_item['weibo_url'].split('/')[-1]
+                comment_url = self.base_url + '/comment/' + tweet_item['weibo_url'].split('/')[-1] + '?page=1'
                 yield Request(url=comment_url, callback=self.parse_comment, meta={'weibo_url': tweet_item['weibo_url']})
 
             except Exception as e:
@@ -170,13 +170,14 @@ class WeiboSpider(Spider):
         抓取关注列表
         """
         # 如果是第1页，一次性获取后面的所有页
-        all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
-        if all_page:
-            all_page = all_page.group(1)
-            all_page = int(all_page)
-            for page_num in range(2, all_page + 1):
-                page_url = response.url.replace('page=1', 'page={}'.format(page_num))
-                yield Request(page_url, self.parse_follow, dont_filter=True, meta=response.meta)
+        if response.url.endswith('page=1'):
+            all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
+            if all_page:
+                all_page = all_page.group(1)
+                all_page = int(all_page)
+                for page_num in range(2, all_page + 1):
+                    page_url = response.url.replace('page=1', 'page={}'.format(page_num))
+                    yield Request(page_url, self.parse_follow, dont_filter=True, meta=response.meta)
         selector = Selector(response)
         urls = selector.xpath('//a[text()="关注他" or text()="关注她" or text()="取消关注"]/@href').extract()
         uids = re.findall('uid=(\d+)', ";".join(urls), re.S)
@@ -194,13 +195,14 @@ class WeiboSpider(Spider):
         抓取粉丝列表
         """
         # 如果是第1页，一次性获取后面的所有页
-        all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
-        if all_page:
-            all_page = all_page.group(1)
-            all_page = int(all_page)
-            for page_num in range(2, all_page + 1):
-                page_url = response.url.replace('page=1', 'page={}'.format(page_num))
-                yield Request(page_url, self.parse_fans, dont_filter=True, meta=response.meta)
+        if response.url.endswith('page=1'):
+            all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
+            if all_page:
+                all_page = all_page.group(1)
+                all_page = int(all_page)
+                for page_num in range(2, all_page + 1):
+                    page_url = response.url.replace('page=1', 'page={}'.format(page_num))
+                    yield Request(page_url, self.parse_fans, dont_filter=True, meta=response.meta)
         selector = Selector(response)
         urls = selector.xpath('//a[text()="关注他" or text()="关注她" or text()="移除"]/@href').extract()
         uids = re.findall('uid=(\d+)', ";".join(urls), re.S)
@@ -215,13 +217,14 @@ class WeiboSpider(Spider):
 
     def parse_comment(self, response):
         # 如果是第1页，一次性获取后面的所有页
-        all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
-        if all_page:
-            all_page = all_page.group(1)
-            all_page = int(all_page)
-            for page_num in range(2, all_page + 1):
-                page_url = response.url.replace('page=1', 'page={}'.format(page_num))
-                yield Request(page_url, self.parse_comment, dont_filter=True, meta=response.meta)
+        if response.url.endswith('page=1'):
+            all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
+            if all_page:
+                all_page = all_page.group(1)
+                all_page = int(all_page)
+                for page_num in range(2, all_page + 1):
+                    page_url = response.url.replace('page=1', 'page={}'.format(page_num))
+                    yield Request(page_url, self.parse_comment, dont_filter=True, meta=response.meta)
         selector = Selector(response)
         comment_nodes = selector.xpath('//div[@class="c" and contains(@id,"C_")]')
         for comment_node in comment_nodes:
