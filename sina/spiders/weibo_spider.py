@@ -129,14 +129,14 @@ class WeiboSpider(Spider):
                 else:
                     tweet_item['created_at'] = time_fix(create_time_info.strip())
 
-                like_num = tweet_node.xpath('.//a[contains(text(),"赞[")]/text()')[0]
+                like_num = tweet_node.xpath('.//a[contains(text(),"赞[")]/text()')[-1]
                 tweet_item['like_num'] = int(re.search('\d+', like_num).group())
 
-                repost_num = tweet_node.xpath('.//a[contains(text(),"转发[")]/text()')[0]
+                repost_num = tweet_node.xpath('.//a[contains(text(),"转发[")]/text()')[-1]
                 tweet_item['repost_num'] = int(re.search('\d+', repost_num).group())
 
                 comment_num = tweet_node.xpath(
-                    './/a[contains(text(),"评论[") and not(contains(text(),"原文"))]/text()')[0]
+                    './/a[contains(text(),"评论[") and not(contains(text(),"原文"))]/text()')[-1]
                 tweet_item['comment_num'] = int(re.search('\d+', comment_num).group())
 
                 tweet_content_node = tweet_node.xpath('.//span[@class="ctt"]')[0]
