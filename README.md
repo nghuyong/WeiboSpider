@@ -20,7 +20,7 @@ This is a sina weibo spider built by scrapy
 已经在senior分支的基础上新增了[search分支](https://github.com/nghuyong/WeiboSpider/tree/search)，用于微博关键词搜索
 
 
-## update
+## Change log
 - 2018/10/13 添加[微博搜索分支](https://github.com/nghuyong/WeiboSpider/tree/search)
 - 2018/9/30 添加布隆过滤器
 
