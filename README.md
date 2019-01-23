@@ -1,7 +1,5 @@
 # WeiboSpider
 This is a sina weibo spider built by scrapy
-# update
-**目前微博验证码已经变成了极验验证码，原先验证码部分已经失效，现在仅支持[simple](https://github.com/nghuyong/WeiboSpider/tree/simple)分支，自己添加cookie进行爬取**
 
 更多关于微博爬虫的介绍请移步:[微博爬虫总结：构建单机千万级别的微博爬虫系统](http://www.nghuyong.top/2018/09/12/spider/%E5%BE%AE%E5%8D%9A%E7%88%AC%E8%99%AB%E6%80%BB%E7%BB%93%EF%BC%9A%E6%9E%84%E5%BB%BA%E5%8D%95%E6%9C%BA%E5%8D%83%E4%B8%87%E7%BA%A7%E5%88%AB%E7%9A%84%E5%BE%AE%E5%8D%9A%E7%88%AC%E8%99%AB%E7%B3%BB%E7%BB%9F/)
 
@@ -43,9 +41,9 @@ pip install -r requirements.txt
 ### 购买账号
 小号购买地址(**访问需要翻墙**): http://www.xiaohao.shop/ 
 
-购买普通国内手机号注册的小号即可
+需要购买**绑号无验证码类型的微博小号**（重点！）
 
-![](./images/xiaohao.shop.png)
+![](./images/xiaohao_shop.png)
 
 购买越多，sina/settings.py 中的延迟就可以越低，并发也就可以越大
 

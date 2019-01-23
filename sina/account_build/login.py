@@ -17,7 +17,7 @@ class WeiboLogin():
     def __init__(self, username, password):
         os.system('pkill -f phantom')
         self.url = 'https://passport.weibo.cn/signin/login?entry=mweibo&r=https://weibo.cn/'
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.PhantomJS()
         self.browser.set_window_size(1050, 840)
         self.wait = WebDriverWait(self.browser, 20)
         self.username = username
@@ -71,6 +71,7 @@ if __name__ == '__main__':
             print(e)
             continue
         print('获取cookie成功')
+        print('Cookie:', cookie_str)
         try:
             collection.insert(
                 {"_id": username, "password": password, "cookie": cookie_str, "status": "success"})
