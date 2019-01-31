@@ -33,6 +33,7 @@ class InformationItem(Item):
     authentication = Field()  # 认证
     person_url = Field()  # 首页链接
     crawl_time = Field()  # 抓取时间戳
+    labels = Field()  # 标签
 
 
 class RelationshipsItem(Item):

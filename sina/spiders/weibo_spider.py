@@ -34,12 +34,13 @@ class WeiboSpider(Spider):
         nick_name = re.findall('昵称;?[：:]?(.*?);', text1)
         gender = re.findall('性别;?[：:]?(.*?);', text1)
         place = re.findall('地区;?[：:]?(.*?);', text1)
-        briefIntroduction = re.findall('简介;[：:]?(.*?);', text1)
+        briefIntroduction = re.findall('简介;?[：:]?(.*?);', text1)
         birthday = re.findall('生日;?[：:]?(.*?);', text1)
         sex_orientation = re.findall('性取向;?[：:]?(.*?);', text1)
         sentiment = re.findall('感情状况;?[：:]?(.*?);', text1)
         vip_level = re.findall('会员等级;?[：:]?(.*?);', text1)
         authentication = re.findall('认证;?[：:]?(.*?);', text1)
+        labels = re.findall('标签;?[：:]?(.*?)更多>>', text1)
         if nick_name and nick_name[0]:
             information_item["nick_name"] = nick_name[0].replace(u"\xa0", "")
         if gender and gender[0]:
@@ -64,6 +65,8 @@ class WeiboSpider(Spider):
             information_item["vip_level"] = vip_level[0].replace(u"\xa0", "")
         if authentication and authentication[0]:
             information_item["authentication"] = authentication[0].replace(u"\xa0", "")
+        if labels and labels[0]:
+            information_item["labels"] = labels[0].replace(u"\xa0", ",").replace(';', '').strip(',')
         request_meta = response.meta
         request_meta['item'] = information_item
         yield Request(self.base_url + '/u/{}'.format(information_item['_id']),
