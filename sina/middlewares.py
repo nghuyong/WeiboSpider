@@ -42,6 +42,7 @@ class RedirectMiddleware(object):
                                                         {'$set': {'status': 'error'}}, )
             return request
         elif http_code == 418:
+            spider.logger.error('ip 被封了!!!请更换ip,或者停止程序...')
             return request
         else:
             return response
