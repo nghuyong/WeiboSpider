@@ -17,7 +17,7 @@ class WeiboLogin():
     def __init__(self, username, password):
         os.system('pkill -f phantom')
         self.url = 'https://passport.weibo.cn/signin/login?entry=mweibo&r=https://weibo.cn/'
-        self.browser = webdriver.PhantomJS()
+        self.browser = webdriver.Chrome()
         self.browser.set_window_size(1050, 840)
         self.wait = WebDriverWait(self.browser, 20)
         self.username = username
@@ -42,9 +42,10 @@ class WeiboLogin():
         :return:
         """
         self.open()
-        WebDriverWait(self.browser, 30).until(
-            EC.title_is('我的首页')
-        )
+        try:
+            WebDriverWait(self.browser, 30).until(EC.title_is('我的首页'))
+        except:
+            WebDriverWait(self.browser, 300).until(EC.url_contains("https://m.weibo.cn/") )
         cookies = self.browser.get_cookies()
         cookie = [item["name"] + "=" + item["value"] for item in cookies]
         cookie_str = '; '.join(item for item in cookie)
