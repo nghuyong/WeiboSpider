@@ -142,18 +142,16 @@ class WeiboSpider(Spider):
                     './/a[contains(text(),"评论[") and not(contains(text(),"原文"))]/text()')[-1]
                 tweet_item['comment_num'] = int(re.search('\d+', comment_num).group())
 
-                tweet_content_node = tweet_node.xpath('.//span[@class="ctt"]')[0]
-
                 # 检测由没有阅读全文:
-                all_content_link = tweet_content_node.xpath('.//a[text()="全文"]')
+                all_content_link = tweet_node.xpath('.//a[text()="全文" and contains(@href,"ckAll=1")]')
                 if all_content_link:
                     all_content_url = self.base_url + all_content_link[0].xpath('./@href')[0]
                     yield Request(all_content_url, callback=self.parse_all_content, meta={'item': tweet_item},
                                   priority=1)
 
                 else:
-                    all_content = tweet_content_node.xpath('string(.)').replace('\u200b', '').strip()
-                    tweet_item['content'] = all_content[1:]
+                    all_content_text = tweet_node.xpath('string(.)').split('\xa0', maxsplit=1)[0]
+                    tweet_item['content'] = all_content_text.strip()
                     yield tweet_item
 
                 # 抓取该微博的评论信息
@@ -167,9 +165,10 @@ class WeiboSpider(Spider):
         # 有阅读全文的情况，获取全文
         tree_node = etree.HTML(response.body)
         tweet_item = response.meta['item']
-        content_node = tree_node.xpath('//div[@id="M_"]//span[@class="ctt"]')[0]
-        all_content = content_node.xpath('string(.)').replace('\u200b', '').strip()
-        tweet_item['content'] = all_content[1:]
+        content_node = tree_node.xpath('//*[@id="M_"]/div[1]')[0]
+        all_content_text = content_node.xpath('string(.)').split(':', maxsplit=1)[1]
+        all_content_text = all_content_text.split('\xa0')[0]
+        tweet_item['content'] = all_content_text.strip()
         yield tweet_item
 
     def parse_follow(self, response):
