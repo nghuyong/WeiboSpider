@@ -150,7 +150,10 @@ class WeiboSpider(Spider):
                                   priority=1)
 
                 else:
-                    all_content_text = tweet_node.xpath('string(.)').split('\xa0', maxsplit=1)[0]
+                    all_content_text = tweet_node.xpath('string(.)')
+                    if '转发理由:' in all_content_text:
+                        all_content_text = all_content_text.split('转发理由:')[1]
+                    all_content_text = all_content_text.split('\xa0', maxsplit=1)[0]
                     tweet_item['content'] = all_content_text.strip()
                     yield tweet_item
 
