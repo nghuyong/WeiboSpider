@@ -19,6 +19,7 @@ This is a sina weibo spider built by scrapy
 
 
 ## Change log
+- 2019/05/07 全面修复历史问题，增加用户的标签，评论的点赞，微博的发布平台/表情/图片/视频等新的字段
 - 2018/10/13 添加[微博搜索分支](https://github.com/nghuyong/WeiboSpider/tree/search)
 - 2018/9/30 添加布隆过滤器
 

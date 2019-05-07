@@ -18,6 +18,7 @@
 |vip_level| 会员等级|
 |authentication|认证情况|
 |person_url|用户首页链接|
+|labels|用户标签，用逗号分割|
 |crawl_time|抓取时间戳|
 
 示例:
@@ -28,12 +29,17 @@
 |    字段   | 说明 |
 | :---: | :----: |
 | _id | 微博id |
-|user_id       | 这则微博作者的ID |
+|user_id| 这则微博作者的ID |
 |content |微博的内容|
 |created_at |微博发表时间|
 |repost_num |转发数|
 |comment_num |评论数|
 |like_num| 点赞数|
+|tool|发布微博的工具|
+|image_url|微博中图片的URL，注意如果是组图会只抓取第一张|
+|video_url|微博中视频的URL|
+|location|定位信息|
+|origin_weibo|原始微博，只有转发的微博才有这个字段|
 |crawl_time|抓取时间戳|
 
 示例:

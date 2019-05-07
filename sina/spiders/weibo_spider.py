@@ -8,7 +8,7 @@ from scrapy.selector import Selector
 from scrapy.http import Request
 from scrapy.utils.project import get_project_settings
 from sina.items import TweetsItem, InformationItem, RelationshipsItem, CommentItem
-from sina.spiders.utils import time_fix
+from sina.spiders.utils import time_fix, extract_weibo_content, extract_comment_content
 import time
 
 
@@ -126,9 +126,11 @@ class WeiboSpider(Spider):
                                                                            user_tweet_id.group(1))
                 tweet_item['user_id'] = user_tweet_id.group(2)
                 tweet_item['_id'] = '{}_{}'.format(user_tweet_id.group(2), user_tweet_id.group(1))
-                create_time_info = tweet_node.xpath('.//span[@class="ct"]/text()')[-1]
+                create_time_info_node = tweet_node.xpath('.//span[@class="ct"]')[-1]
+                create_time_info = create_time_info_node.xpath('string(.)')
                 if "来自" in create_time_info:
                     tweet_item['created_at'] = time_fix(create_time_info.split('来自')[0].strip())
+                    tweet_item['tool'] = create_time_info.split('来自')[1].strip()
                 else:
                     tweet_item['created_at'] = time_fix(create_time_info.strip())
 
@@ -142,6 +144,22 @@ class WeiboSpider(Spider):
                     './/a[contains(text(),"评论[") and not(contains(text(),"原文"))]/text()')[-1]
                 tweet_item['comment_num'] = int(re.search('\d+', comment_num).group())
 
+                images = tweet_node.xpath('.//img[@alt="图片"]/@src')
+                if images:
+                    tweet_item['image_url'] = images[0]
+
+                videos = tweet_node.xpath('.//a[contains(@href,"https://m.weibo.cn/s/video/show?object_id=")]/@href')
+                if videos:
+                    tweet_item['video_url'] = videos[0]
+
+                map_node = tweet_node.xpath('.//a[contains(text(),"显示地图")]')
+                if map_node:
+                    tweet_item['location'] = True
+
+                repost_node = tweet_node.xpath('.//a[contains(text(),"原文评论[")]/@href')
+                if repost_node:
+                    tweet_item['origin_weibo'] = repost_node[0]
+
                 # 检测由没有阅读全文:
                 all_content_link = tweet_node.xpath('.//a[text()="全文" and contains(@href,"ckAll=1")]')
                 if all_content_link:
@@ -150,12 +168,10 @@ class WeiboSpider(Spider):
                                   priority=1)
 
                 else:
-                    all_content_text = tweet_node.xpath('string(.)')
-                    if '转发理由:' in all_content_text:
-                        all_content_text = all_content_text.split('转发理由:')[1]
-                    all_content_text = all_content_text.split('\xa0', maxsplit=1)[0]
-                    all_content_text = all_content_text.split(':')[1]
-                    tweet_item['content'] = all_content_text.strip()
+                    tweet_html = etree.tostring(tweet_node, encoding='unicode')
+                    tweet_item['content'] = extract_weibo_content(tweet_html)
+                    if 'location' in tweet_item:
+                        tweet_item['location'] = tweet_node.xpath('.//span[@class="ctt"]/a[last()]/text()')[0]
                     yield tweet_item
 
                 # 抓取该微博的评论信息
@@ -170,10 +186,10 @@ class WeiboSpider(Spider):
         tree_node = etree.HTML(response.body)
         tweet_item = response.meta['item']
         content_node = tree_node.xpath('//*[@id="M_"]/div[1]')[0]
-        all_content_text = content_node.xpath('string(.)').split(':', maxsplit=1)[1]
-        all_content_text = all_content_text.split('\xa0')[0]
-        all_content_text = all_content_text.split(':')[1]
-        tweet_item['content'] = all_content_text.strip()
+        tweet_html = etree.tostring(content_node, encoding='unicode')
+        tweet_item['content'] = extract_weibo_content(tweet_html)
+        if 'location' in tweet_item:
+            tweet_item['location'] = content_node.xpath('.//span[@class="ctt"]/a[last()]/text()')[0]
         yield tweet_item
 
     def parse_follow(self, response):
@@ -236,20 +252,22 @@ class WeiboSpider(Spider):
                 for page_num in range(2, all_page + 1):
                     page_url = response.url.replace('page=1', 'page={}'.format(page_num))
                     yield Request(page_url, self.parse_comment, dont_filter=True, meta=response.meta)
-        selector = Selector(response)
-        comment_nodes = selector.xpath('//div[@class="c" and contains(@id,"C_")]')
+        tree_node = etree.HTML(response.body)
+        comment_nodes = tree_node.xpath('//div[@class="c" and contains(@id,"C_")]')
         for comment_node in comment_nodes:
-            comment_user_url = comment_node.xpath('.//a[contains(@href,"/u/")]/@href').extract_first()
+            comment_user_url = comment_node.xpath('.//a[contains(@href,"/u/")]/@href')
             if not comment_user_url:
                 continue
             comment_item = CommentItem()
             comment_item['crawl_time'] = int(time.time())
             comment_item['weibo_url'] = response.meta['weibo_url']
-            comment_item['comment_user_id'] = re.search(r'/u/(\d+)', comment_user_url).group(1)
-            comment_item['content'] = comment_node.xpath('.//span[@class="ctt"]').xpath('string(.)').extract_first()
-            comment_item['_id'] = comment_node.xpath('./@id').extract_first()
-            created_at = comment_node.xpath('.//span[@class="ct"]/text()').extract_first()
-            comment_item['created_at'] = time_fix(created_at.split('\xa0')[0])
+            comment_item['comment_user_id'] = re.search(r'/u/(\d+)', comment_user_url[0]).group(1)
+            comment_item['content'] = extract_comment_content(etree.tostring(comment_node, encoding='unicode'))
+            comment_item['_id'] = comment_node.xpath('./@id')[0]
+            created_at_info = comment_node.xpath('.//span[@class="ct"]/text()')[0]
+            like_num = comment_node.xpath('.//a[contains(text(),"赞[")]/text()')[-1]
+            comment_item['like_num'] = int(re.search('\d+', like_num).group())
+            comment_item['created_at'] = time_fix(created_at_info.split('\xa0')[0])
             yield comment_item
 
 
