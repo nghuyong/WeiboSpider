@@ -23,6 +23,8 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': None,
     'sina.middlewares.CookieMiddleware': 300,
     'sina.middlewares.RedirectMiddleware': 200,
+    'sina.middlewares.IPProxyMiddleware': 100,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 101,
 }
 
 ITEM_PIPELINES = {
@@ -34,3 +36,9 @@ ITEM_PIPELINES = {
 LOCAL_MONGO_HOST = '127.0.0.1'
 LOCAL_MONGO_PORT = 27017
 DB_NAME = 'Sina'
+
+
+# IP
+DOWNLOAD_TIMEOUT = 10
+
+RETRY_TIMES = 15

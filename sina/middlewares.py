@@ -46,3 +46,18 @@ class RedirectMiddleware(object):
             return request
         else:
             return response
+
+
+class IPProxyMiddleware(object):
+
+    def fetch_proxy(self):
+        # 如果需要加入代理IP，请重写这个函数
+        # 这个函数返回一个代理ip，'ip:port'的格式，如'12.34.1.4:9090'
+        return None
+
+    def process_request(self, request, spider):
+        proxy_data = self.fetch_proxy()
+        if proxy_data:
+            current_proxy = f'http://{proxy_data}'
+            spider.logger.debug(f"当前代理IP:{current_proxy}")
+            request.meta['proxy'] = current_proxy
