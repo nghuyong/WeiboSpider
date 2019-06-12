@@ -39,6 +39,7 @@
 |image_url|微博中图片的URL，注意如果是组图会只抓取第一张|
 |video_url|微博中视频的URL|
 |location|定位信息|
+|location_map_info|定位的经纬度信息|
 |origin_weibo|原始微博，只有转发的微博才有这个字段|
 |crawl_time|抓取时间戳|
 
