@@ -41,7 +41,7 @@ pip install -r requirements.txt
 除此之外，还需要安装mongodb和phantomjs，这个自行Google把
 
 ### 购买账号
-小号购买地址(**访问需要翻墙**): http://www.xiaohao.shop/ 
+小号购买地址: http://www.wbxiaohao.com/ 更多小号购买的网站参考[这里](https://github.com/CUHKSZ-TQL/WeiboSpider_SentimentAnalysis/issues/2#issuecomment-505842345).
 
 需要购买**绑号无验证码类型的微博小号**（重点！）
 
