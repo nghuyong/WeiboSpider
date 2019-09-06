@@ -15,7 +15,6 @@ class TweetsItem(Item):
     tool = Field()  # 发布微博的工具
     image_url = Field()  # 图片
     video_url = Field()  # 视频
-    location = Field()  # 定位信息
     origin_weibo = Field()  # 原始微博，只有转发的微博才有这个字段
     location_map_info = Field()  # 定位的经纬度信息
     crawl_time = Field()  # 抓取时间戳

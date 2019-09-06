@@ -158,7 +158,6 @@ class WeiboSpider(Spider):
                     map_node_url = map_node.xpath('./@href')[0]
                     map_info = re.search(r'xy=(.*?)&', map_node_url).group(1)
                     tweet_item['location_map_info'] = map_info
-                    tweet_item['location'] = map_node.xpath('./preceding-sibling::a/text()')[0]
 
                 repost_node = tweet_node.xpath('.//a[contains(text(),"原文评论[")]/@href')
                 if repost_node:
