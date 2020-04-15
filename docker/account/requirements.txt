@@ -1,0 +1,6 @@
+pymongo
+selenium
+apscheduler
+requests
+tqdm
+redis
