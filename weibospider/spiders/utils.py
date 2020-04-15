@@ -27,7 +27,7 @@ def time_fix(time_string):
     return time_string
 
 
-keyword_re = re.compile('<span class="kt">|</span>|原图|<!-- 是否进行翻译 -->|')
+keyword_re = re.compile('<span class="kt">|</span>|原图|<!-- 是否进行翻译 -->|<span class="cmt">|\[组图共.张\]')
 emoji_re = re.compile('<img alt="|" src="//h5\.sinaimg(.*?)/>')
 white_space_re = re.compile('<br />')
 div_re = re.compile('</div>|<div>')
@@ -37,19 +37,23 @@ url_re = re.compile('<a href=(.*?)>|</a>')
 
 def extract_weibo_content(weibo_html):
     s = weibo_html
-    if '转发理由' in s:
-        s = s.split('转发理由:', maxsplit=1)[1]
     if 'class="ctt">' in s:
         s = s.split('class="ctt">', maxsplit=1)[1]
-    s = s.split('赞', maxsplit=1)[0]
-    s = keyword_re.sub('', s)
     s = emoji_re.sub('', s)
     s = url_re.sub('', s)
     s = div_re.sub('', s)
     s = image_re.sub('', s)
     if '<span class="ct">' in s:
         s = s.split('<span class="ct">')[0]
+    splits = s.split('赞[')
+    if len(splits) == 2:
+        s = splits[0]
+    if len(splits) == 3:
+        origin_text = splits[0]
+        retweet_text = splits[1].split('转发理由:')[1]
+        s = origin_text + '转发理由:' + retweet_text
     s = white_space_re.sub(' ', s)
+    s = keyword_re.sub('', s)
     s = s.replace('\xa0', '')
     s = s.strip(':')
     s = s.strip()

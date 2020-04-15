@@ -61,7 +61,7 @@
 | :---: | :----: |
 | _id | 评论的id |
 |comment_user_id|评论的用户ID|
-|weibo_url|weibo的URL|
+|weibo_id|weibo的ID|
 |content|评论内容|
 |created_at| 评论创建时间|
 |crawl_time|抓取时间戳|

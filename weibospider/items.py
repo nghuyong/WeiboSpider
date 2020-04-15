@@ -2,8 +2,8 @@
 from scrapy import Item, Field
 
 
-class TweetsItem(Item):
-    """ 微博信息 """
+class TweetItem(Item):
+    """Tweet information """
     _id = Field()  # 微博id
     weibo_url = Field()  # 微博URL
     created_at = Field()  # 微博发表时间
@@ -20,8 +20,8 @@ class TweetsItem(Item):
     crawl_time = Field()  # 抓取时间戳
 
 
-class InformationItem(Item):
-    """ 个人信息 """
+class UserItem(Item):
+    """ User Information"""
     _id = Field()  # 用户ID
     nick_name = Field()  # 昵称
     gender = Field()  # 性别
@@ -41,7 +41,7 @@ class InformationItem(Item):
     crawl_time = Field()  # 抓取时间戳
 
 
-class RelationshipsItem(Item):
+class RelationshipItem(Item):
     """ 用户关系，只保留与关注的关系 """
     _id = Field()
     fan_id = Field()  # 关注者,即粉丝的id
@@ -56,7 +56,7 @@ class CommentItem(Item):
     _id = Field()
     comment_user_id = Field()  # 评论用户的id
     content = Field()  # 评论的内容
-    weibo_url = Field()  # 评论的微博的url
+    weibo_id = Field()  # 评论的微博的id
     created_at = Field()  # 评论发表时间
     like_num = Field()  # 点赞数
     crawl_time = Field()  # 抓取时间戳
