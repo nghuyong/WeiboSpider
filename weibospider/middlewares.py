@@ -2,7 +2,7 @@
 import random
 
 import pymongo
-from sina.settings import LOCAL_MONGO_PORT, LOCAL_MONGO_HOST, DB_NAME
+from settings import MONGO_PORT, MONGO_HOST
 
 
 class CookieMiddleware(object):
@@ -11,13 +11,13 @@ class CookieMiddleware(object):
     """
 
     def __init__(self):
-        client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
-        self.account_collection = client[DB_NAME]['account']
+        client = pymongo.MongoClient(MONGO_HOST, MONGO_PORT)
+        self.account_collection = client['weibo']['account']
 
     def process_request(self, request, spider):
         all_count = self.account_collection.find({'status': 'success'}).count()
         if all_count == 0:
-            raise Exception('当前账号池为空')
+            raise Exception('Current account pool is empty!! The spider will stop!!')
         random_index = random.randint(0, all_count - 1)
         random_account = self.account_collection.find({'status': 'success'})[random_index]
         request.headers.setdefault('Cookie', random_account['cookie'])
@@ -26,14 +26,13 @@ class CookieMiddleware(object):
 
 class RedirectMiddleware(object):
     """
-    检测账号是否正常
-    302 / 403,说明账号cookie失效/账号被封，状态标记为error
-    418,偶尔产生,需要再次请求
+    check account status
+    HTTP Code = 302/418 -> cookie is expired or banned, and account status will change to 'error'
     """
 
     def __init__(self):
-        client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
-        self.account_collection = client[DB_NAME]['account']
+        client = pymongo.MongoClient(MONGO_HOST, MONGO_PORT)
+        self.account_collection = client['weibo']['account']
 
     def process_response(self, request, response, spider):
         http_code = response.status
@@ -42,7 +41,7 @@ class RedirectMiddleware(object):
                                                         {'$set': {'status': 'error'}}, )
             return request
         elif http_code == 418:
-            spider.logger.error('ip 被封了!!!请更换ip,或者停止程序...')
+            spider.logger.error('IP Proxy is invalid, please change the ip proxy or stop the programme!')
             return request
         else:
             return response
@@ -51,13 +50,13 @@ class RedirectMiddleware(object):
 class IPProxyMiddleware(object):
 
     def fetch_proxy(self):
-        # 如果需要加入代理IP，请重写这个函数
-        # 这个函数返回一个代理ip，'ip:port'的格式，如'12.34.1.4:9090'
+        # You need to rewrite this function if you want to add proxy pool
+        # the function should return a ip in the format of "ip:port" like "12.34.1.4:9090"
         return None
 
     def process_request(self, request, spider):
         proxy_data = self.fetch_proxy()
         if proxy_data:
             current_proxy = f'http://{proxy_data}'
-            spider.logger.debug(f"当前代理IP:{current_proxy}")
+            spider.logger.debug(f"current proxy:{current_proxy}")
             request.meta['proxy'] = current_proxy

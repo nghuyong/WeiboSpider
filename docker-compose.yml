@@ -1,0 +1,97 @@
+version: '3'
+
+services:
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - 7000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/portainer:/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  mongodb:
+    image: mongo
+    volumes:
+      - ./data/mongo:/data/db
+    ports:
+      - 7001:27017
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 7002:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      - mongodb
+
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - 7003:6379
+    volumes:
+      - ./data/redis:/data
+
+  account:
+    image: registry.cn-hangzhou.aliyuncs.com/weibospider/account
+    volumes:
+      - ./weibospider:/app
+    depends_on:
+      - mongodb
+      - redis
+    stdin_open: true
+    tty: true
+
+  weibo-spider-user:
+    image: registry.cn-hangzhou.aliyuncs.com/weibospider/spider
+    volumes:
+      - ./weibospider:/app
+    depends_on:
+      - mongodb
+      - redis
+    command: python run_spider.py user
+
+  weibo-spider-comment:
+    image: registry.cn-hangzhou.aliyuncs.com/weibospider/spider
+    volumes:
+      - ./weibospider:/app
+    depends_on:
+      - mongodb
+      - redis
+    command: python run_spider.py comment
+
+  weibo-spider-fan:
+    image: registry.cn-hangzhou.aliyuncs.com/weibospider/spider
+    volumes:
+      - ./weibospider:/app
+    depends_on:
+      - mongodb
+      - redis
+    command: python run_spider.py fan
+
+  weibo-spider-follow:
+    image: registry.cn-hangzhou.aliyuncs.com/weibospider/spider
+    volumes:
+      - ./weibospider:/app
+    depends_on:
+      - mongodb
+      - redis
+    command: python run_spider.py follow
+
+  weibo-spider-tweet:
+    image: registry.cn-hangzhou.aliyuncs.com/weibospider/spider
+    volumes:
+      - ./weibospider:/app
+    depends_on:
+      - mongodb
+      - redis
+    command: python run_spider.py tweet
