@@ -43,6 +43,7 @@ class TweetSpider(Spider):
                     url = url_format.format(keyword, date_start.strftime("%Y%m%d"), next_time.strftime("%Y%m%d"))
                     urls.append(url)
                     date_start = next_time
+            return urls
 
         # select urls generation by the following code
         urls = init_url_by_user_id()
