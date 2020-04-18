@@ -37,7 +37,7 @@ class CommentSpider(RedisSpider):
                 continue
             comment_item = CommentItem()
             comment_item['crawl_time'] = int(time.time())
-            comment_item['weibo_id'] = response.url.split('/')[-1]
+            comment_item['weibo_id'] = response.url.split('/')[-1].split('?')[0]
             comment_item['comment_user_id'] = re.search(r'/u/(\d+)', comment_user_url[0]).group(1)
             comment_item['content'] = extract_comment_content(etree.tostring(comment_node, encoding='unicode'))
             comment_item['_id'] = comment_node.xpath('./@id')[0]
