@@ -21,7 +21,7 @@ class CommentSpider(Spider):
 
     def start_requests(self):
         tweet_ids = ['IDl56i8av', 'IDkNerVCG', 'IDkJ83QaY']
-        urls = [f"{self.base_url}/comment/{tweet_id}" for tweet_id in tweet_ids]
+        urls = [f"{self.base_url}/comment/{tweet_id}?page=1" for tweet_id in tweet_ids]
         for url in urls:
             yield Request(url, callback=self.parse)
 
@@ -42,7 +42,7 @@ class CommentSpider(Spider):
                 continue
             comment_item = CommentItem()
             comment_item['crawl_time'] = int(time.time())
-            comment_item['weibo_id'] = response.url.split('/')[-1]
+            comment_item['weibo_id'] = response.url.split('/')[-1].split('?')[0]
             comment_item['comment_user_id'] = re.search(r'/u/(\d+)', comment_user_url[0]).group(1)
             comment_item['content'] = extract_comment_content(etree.tostring(comment_node, encoding='unicode'))
             comment_item['_id'] = comment_node.xpath('./@id')[0]
