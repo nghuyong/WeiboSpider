@@ -20,7 +20,7 @@
 ### 拉取项目 && 安装依赖
 本项目Python版本为Python3.6
 ```bash
-git clone git@github.com:nghuyong/WeiboSpider.git --depth 1
+git clone git@github.com:nghuyong/WeiboSpider.git --depth 1 --no-single-branch
 cd WeiboSpider
 git checkout simple
 pip install -r requirements.txt

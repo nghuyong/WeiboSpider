@@ -20,7 +20,7 @@ The spider based on the `weibo.cn`, and the crawled fields are very rich. More d
 ### Pull the project && Install dependencies
 Note that the Python Version is Python3.6
 ```bash
-git clone git@github.com:nghuyong/WeiboSpider.git --depth 1
+git clone git@github.com:nghuyong/WeiboSpider.git --depth 1 --no-single-branch
 cd WeiboSpider
 git checkout simple
 pip install -r requirements.txt
