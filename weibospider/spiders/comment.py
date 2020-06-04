@@ -26,6 +26,7 @@ class CommentSpider(RedisSpider):
             if all_page:
                 all_page = all_page.group(1)
                 all_page = int(all_page)
+                all_page = all_page if all_page <= 50 else 50
                 for page_num in range(2, all_page + 1):
                     page_url = response.url.replace('page=1', 'page={}'.format(page_num))
                     yield Request(page_url, self.parse, dont_filter=True, meta=response.meta)
