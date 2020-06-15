@@ -21,7 +21,7 @@ class CommentSpider(Spider):
 
     def start_requests(self):
         tweet_ids = ['IDl56i8av', 'IDkNerVCG', 'IDkJ83QaY']
-        urls = [f"{self.base_url}/comment/{tweet_id}?page=1" for tweet_id in tweet_ids]
+        urls = [f"{self.base_url}/comment/hot/{tweet_id}?rl=1&page=1" for tweet_id in tweet_ids]
         for url in urls:
             yield Request(url, callback=self.parse)
 
