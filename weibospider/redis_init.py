@@ -45,7 +45,7 @@ def init_follow_spider():
 def init_comment_spider():
     # change the tweet ids
     tweet_ids = ['IDl56i8av', 'IDkNerVCG', 'IDkJ83QaY']
-    urls = [f"https://weibo.cn/comment/{tweet_id}?page=1" for tweet_id in tweet_ids]
+    urls = [f"https://weibo.cn/comment/hot/{tweet_id}?rl=1&page=1" for tweet_id in tweet_ids]
     redis_init('comment_spider', urls)
 
 
