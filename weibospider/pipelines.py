@@ -18,7 +18,7 @@ class MongoDBPipeline(object):
             self.insert_item(self.Comments, item)
         elif spider.name == 'fan_spider':
             self.insert_item(self.Relationships, item)
-        elif spider.name == 'follow_spider':
+        elif spider.name == 'follower_spider':
             self.insert_item(self.Relationships, item)
         elif spider.name == 'user_spider':
             self.insert_item(self.Users, item)
