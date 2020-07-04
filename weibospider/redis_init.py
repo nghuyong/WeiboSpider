@@ -39,7 +39,7 @@ def init_follow_spider():
     # change the user ids
     user_ids = ['1087770692', '1699432410', '1266321801']
     urls = [f"https://weibo.cn/{user_id}/follow?page=1" for user_id in user_ids]
-    redis_init('fan_spider', urls)
+    redis_init('follower_spider', urls)
 
 
 def init_comment_spider():
