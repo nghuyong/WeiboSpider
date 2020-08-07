@@ -66,11 +66,12 @@ def init_keyword_tweets_spider():
     url_format = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}" \
                  "&advancedfilter=1&starttime={}&endtime={}&sort=time&page=1"
     while date_start < date_end:
-        for keyword in keywords:
-            next_time = date_start + time_spread
-            url = url_format.format(keyword, date_start.strftime("%Y%m%d"), next_time.strftime("%Y%m%d"))
-            urls.append(url)
-            date_start = next_time
+        next_time = date_start + time_spread
+        urls.extend(
+            [url_format.format(keyword, date_start.strftime("%Y%m%d"), next_time.strftime("%Y%m%d"))
+             for keyword in keywords]
+        )
+        date_start = next_time
     redis_init('tweet_spider', urls)
 
 
