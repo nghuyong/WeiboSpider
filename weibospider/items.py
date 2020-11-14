@@ -60,3 +60,16 @@ class CommentItem(Item):
     created_at = Field()  # 评论发表时间
     like_num = Field()  # 点赞数
     crawl_time = Field()  # 抓取时间戳
+
+class RepostItem(Item):
+    """
+    微博转发信息
+    """
+    _id = Field()
+    user_id = Field()  # 转发用户的id
+    nick_name = Field()  # 昵称
+    content = Field()  # 转发的内容
+    weibo_id = Field()  # 转发的微博的id
+    created_at = Field()  # 转发时间
+    crawl_time = Field()  # 抓取时间戳
+
