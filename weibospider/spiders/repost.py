@@ -13,7 +13,6 @@ from scrapy.http import Request
 import time
 from items import RepostItem
 from spiders.utils import extract_repost_content, time_fix
-import pandas 
 
 class RepostSpider(Spider):
     name = "repost_spider"
