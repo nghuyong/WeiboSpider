@@ -68,3 +68,16 @@
 
 示例:
 ![](./images/comment.png)
+
+### 转发数据
+
+|    字段    |       说明       |
+| :--------: | :--------------: |
+|    _id     |       null       |
+|  user_id   |   转发用户的ID   |
+|  weibo_id  | 被转发weibo的 ID |
+| nick_name  |  转发用户的昵称  |
+|  content   |  转发的评论内容  |
+| created_at |     转发时间     |
+| crawl_time |    抓取时间戳    |
+

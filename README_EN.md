@@ -11,6 +11,7 @@ It can realize the daily capture of 100,000 data.
 - Users' social relationships (fans/followers)
 - Comments of tweets
 - Tweets based on keywords and time period
+- Retweets following a tweet
 
 ### Data Structure
 The spider based on the `weibo.cn`, and the crawled fields are very rich. More detail:[Data Structure Description](./.github/data_stracture.md)
@@ -94,3 +95,11 @@ python run_spider.py tweet
 python run_spider.py tweet
 ```
 ![](./.github/images/tweet-keyword-spider.png)
+
+### Crawl Retweet/Repost
+
+```
+python run_spider.py repost
+```
+
+![](./.github/images/repost.png)
