@@ -11,6 +11,7 @@
 - 用户社交关系抓取(粉丝/关注)
 - 微博评论抓取
 - 基于关键词和时间段的微博抓取
+- 微博转发抓取
 
 ### 字段说明
 项目基于weibo.cn站点抓取，抓取的字段非常丰富。具体请移步:[数据字段说明](./.github/data_stracture.md)
@@ -94,3 +95,12 @@ python run_spider.py tweet
 python run_spider.py tweet
 ```
 ![](./.github/images/tweet-keyword-spider.png)
+
+### 抓取微博转发
+
+```bash
+python run_spider.py repost
+```
+
+![](./.github/images/repost-spider.png)
+

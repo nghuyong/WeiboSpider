@@ -75,3 +75,19 @@ def extract_comment_content(comment_html):
     s = s.strip(':')
     s = s.strip()
     return s
+
+def extract_repost_content(repost_html):
+    s = repost_html
+    if 'class="cc">' in s:
+        s = s.split('<span class="cc">', maxsplit=1)[0]
+    s = emoji_re.sub('', s)
+    s = keyword_re.sub('', s)
+    s = url_re.sub('', s)
+    s = div_re.sub('', s)
+    s = image_re.sub('', s)
+    s = white_space_re.sub(' ', s)
+    s = s.replace('\xa0', '')
+    s = s.replace('<div class="c">', '')
+    s = s.strip(':')
+    s = s.strip()
+    return s
