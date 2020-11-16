@@ -102,5 +102,5 @@ python run_spider.py tweet
 python run_spider.py repost
 ```
 
-![](./.github/images/repost.png)
+![](./.github/images/repost-spider.png)
 
