@@ -36,7 +36,7 @@ class TweetSpider(Spider):
             time_spread = datetime.timedelta(days=1)
             urls = []
             url_format = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}" \
-                         "&advancedfilter=1&starttime={}&endtime={}&sort=time&page=1"
+                         "&advancedfilter=1&starttime={}&endtime={}&sort=time&page=1&atten=1"
             while date_start < date_end:
                 next_time = date_start + time_spread
                 urls.extend(
