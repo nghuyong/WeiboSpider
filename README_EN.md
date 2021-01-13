@@ -1,9 +1,33 @@
-# WeiboSpider-Simple
+[中文说明](./README.md) | **English**
 
-This version is a simple version with only one weibo account and only one IP.
-It can realize the daily capture of 100,000 data.
+# WeiboSpider
+<a href="https://github.com/nghuyong/WeiboSpider/stargazers">
+    <img src="https://img.shields.io/github/stars/nghuyong/WeiboSpider.svg?colorA=orange&colorB=orange&logo=github"
+         alt="GitHub stars">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/issues">
+        <img src="https://img.shields.io/github/issues/nghuyong/WeiboSpider.svg"
+             alt="GitHub issues">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/">
+        <img src="https://img.shields.io/github/last-commit/nghuyong/WeiboSpider.svg">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/blob/master/LICENSE">
+        <img src="https://img.shields.io/github/license/nghuyong/WeiboSpider.svg"
+             alt="GitHub license">
+</a>
+
+Continuously maintained Sina Weibo crawler 🚀🚀🚀
 
 ## Introduction
+
+### Branches
+The project has 2 branches to meet different needs:
+
+|Branch|Features|Magnitude of the crawled data|
+|:---:|:---:|:---:|
+|[master](https://github.com/nghuyong/WeiboSpider/tree/master)|Single account, single IP, single machine|Hundreds of thousands|
+|[senior](https://github.com/nghuyong/WeiboSpider/tree/senior)|Account pool, IP pool, Docker|Hundreds of millions(**Theoretical unlimited**)|
 
 ### Supported crawling types
 - User Information
@@ -23,7 +47,6 @@ Note that the Python Version is Python3.6
 ```bash
 git clone git@github.com:nghuyong/WeiboSpider.git --depth 1 --no-single-branch
 cd WeiboSpider
-git checkout simple
 pip install -r requirements.txt
 ```
 In addition, you need to install mongodb.
@@ -103,3 +126,11 @@ python run_spider.py repost
 ```
 
 ![](./.github/images/repost-spider.png)
+
+
+## Last But Not The Least
+Based on this project, I have crawled millions weibo active user data, and have built many weibo public opinion datasets: [weibo-public-opinion-datasets](https://github.com/nghuyong/weibo-public-opinion-datasets).
+
+If you have any problems in using the project, you can open an issue to discuss.
+
+If you have good ideas on social media computing / public opinion analysis, feel free to email me: nghuyong@163.com

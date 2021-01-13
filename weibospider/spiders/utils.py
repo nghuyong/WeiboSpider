@@ -27,7 +27,7 @@ def time_fix(time_string):
     return time_string
 
 
-keyword_re = re.compile('<span class="kt">|</span>|原图|<!-- 是否进行翻译 -->|<span class="cmt">|\[组图共.张\]')
+keyword_re = re.compile('<span class="kt">|</span>|原图|<!-- 是否进行翻译 -->|<span class="cmt">|\[组图共.+张\]')
 emoji_re = re.compile('<img alt="|" src="//h5\.sinaimg(.*?)/>')
 white_space_re = re.compile('<br />')
 div_re = re.compile('</div>|<div>')

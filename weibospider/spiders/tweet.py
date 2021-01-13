@@ -23,7 +23,7 @@ class TweetSpider(Spider):
     def start_requests(self):
 
         def init_url_by_user_id():
-            "crawl tweets post by users"
+            # crawl tweets post by users
             user_ids = ['1087770692', '1699432410', '1266321801']
             urls = [f'{self.base_url}/{user_id}/profile?page=1' for user_id in user_ids]
             return urls
@@ -39,21 +39,21 @@ class TweetSpider(Spider):
                          "&advancedfilter=1&starttime={}&endtime={}&sort=time&atten=1&page=1"
             while date_start <= date_end:
                 for keyword in keywords:
-                    oneday_back = date_start - time_spread
+                    one_day_back = date_start - time_spread
                     # from today's 7:00-8:00am to 23:00-24:00am
                     for hour in range(7, 24):
                         # calculation rule of starting time: start_date 8:00am + offset:16
-                        beginhour = oneday_back.strftime("%Y%m%d") + "-" + str(hour + 16)
+                        begin_hour = one_day_back.strftime("%Y%m%d") + "-" + str(hour + 16)
                         # calculation rule of ending time: (end_date+1) 8:00am + offset:-7
-                        endhour = oneday_back.strftime("%Y%m%d") + "-" + str(hour - 7)
-                        urls.append(url_format.format(keyword, beginhour, endhour))
-                    twoday_back = oneday_back - time_spread
+                        end_hour = one_day_back.strftime("%Y%m%d") + "-" + str(hour - 7)
+                        urls.append(url_format.format(keyword, begin_hour, end_hour))
+                    two_day_back = one_day_back - time_spread
                     # from today's 0:00-1:00am to 6:00-7:00am
                     for hour in range(0, 7):
                         # note the offset change bc we are two-days back now
-                        beginhour = twoday_back.strftime("%Y%m%d") + "-" + str(hour + 40)
-                        endhour = twoday_back.strftime("%Y%m%d") + "-" + str(hour + 17)
-                        urls.append(url_format.format(keyword, beginhour, endhour))
+                        begin_hour = two_day_back.strftime("%Y%m%d") + "-" + str(hour + 40)
+                        end_hour = two_day_back.strftime("%Y%m%d") + "-" + str(hour + 17)
+                        urls.append(url_format.format(keyword, begin_hour, end_hour))
                 date_start = date_start + time_spread
             return urls
 
