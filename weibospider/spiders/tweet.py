@@ -19,6 +19,7 @@ from spiders.utils import time_fix, extract_weibo_content
 class TweetSpider(Spider):
     name = "tweet_spider"
     base_url = "https://weibo.cn"
+    keywords = ['转基因','北京']
 
     def start_requests(self):
 
@@ -28,29 +29,44 @@ class TweetSpider(Spider):
             urls = [f'{self.base_url}/{user_id}/profile?page=1' for user_id in user_ids]
             return urls
 
-        def init_url_by_keywords():
+        def init_url_by_keyword(keyword):
             # crawl tweets include keywords in a period, you can change the following keywords and date
-            keywords = ['转基因']
-            date_start = datetime.datetime.strptime("2017-07-30", '%Y-%m-%d')
-            date_end = datetime.datetime.strptime("2018-07-30", '%Y-%m-%d')
+            date_start = datetime.datetime.strptime("2020-06-08", '%Y-%m-%d')
+            date_end = datetime.datetime.strptime("2020-09-15", '%Y-%m-%d')
             time_spread = datetime.timedelta(days=1)
             urls = []
             url_format = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}" \
-                         "&advancedfilter=1&starttime={}&endtime={}&sort=time&page=1&atten=1"
-            while date_start < date_end:
+                         "&advancedfilter=1&starttime={}&endtime={}&sort=time&page=1"
+            while date_start <= date_end:
                 next_time = date_start + time_spread
-                urls.extend(
-                    [url_format.format(keyword, date_start.strftime("%Y%m%d"), next_time.strftime("%Y%m%d"))
-                     for keyword in keywords]
-                )
+                start_day1 = date_start - datetime.timedelta(days=2)
+                start_day2 = date_start - time_spread
+                start_day1 = start_day1.strftime("%Y%m%d")
+                start_day2 = start_day2.strftime("%Y%m%d")
+                for i in range(6):
+                    urls.append(
+                        url_format.format(keyword, start_day1 + '-' + str(40+i), start_day1 + '-' + str(17+i))
+                    )
+                for i in range(16):
+                    urls.append(
+                        url_format.format(keyword, start_day2 + '-' + str(23+i), start_day2 + '-' + str(0+i))
+                    )
                 date_start = next_time
             return urls
 
         # select urls generation by the following code
-        urls = init_url_by_user_id()
-        # urls = init_url_by_keywords()
+        urls = init_url_by_user_id()       
         for url in urls:
             yield Request(url, callback=self.parse)
+
+        # for key_word in self.keywords:
+        #     urls = init_url_by_keyword(key_word)
+        #     for url in urls:
+        #         yield Request(url,
+        #                       callback=self.parse,
+        #                       meta={
+        #                           'keyword': key_word
+        #                       })         
 
     def parse(self, response):
         if response.url.endswith('page=1'):
