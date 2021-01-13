@@ -1,9 +1,33 @@
-# WeiboSpider-Simple
+[中文说明](./README.md) | **English**
 
-This version is a simple version with only one weibo account and only one IP.
-It can realize the daily capture of 100,000 data.
+# WeiboSpider
+<a href="https://github.com/nghuyong/WeiboSpider/stargazers">
+    <img src="https://img.shields.io/github/stars/nghuyong/WeiboSpider.svg?colorA=orange&colorB=orange&logo=github"
+         alt="GitHub stars">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/issues">
+        <img src="https://img.shields.io/github/issues/nghuyong/WeiboSpider.svg"
+             alt="GitHub issues">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/">
+        <img src="https://img.shields.io/github/last-commit/nghuyong/WeiboSpider.svg">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/blob/master/LICENSE">
+        <img src="https://img.shields.io/github/license/nghuyong/WeiboSpider.svg"
+             alt="GitHub license">
+</a>
+
+Continuously maintained Sina Weibo crawler 🚀🚀🚀
 
 ## Introduction
+
+### Branches
+The project has 2 branches to meet different needs:
+
+|Branch|Features|Magnitude of the crawled data|
+|:---:|:---:|:---:|
+|[master](https://github.com/nghuyong/WeiboSpider/tree/master)|Single account, single IP, single machine|Hundreds of thousands|
+|[senior](https://github.com/nghuyong/WeiboSpider/tree/senior)|Account pool, IP pool, Docker|Hundreds of millions(**Theoretical unlimited**)|
 
 ### Supported crawling types
 - User Information

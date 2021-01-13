@@ -1,16 +1,40 @@
-# WeiboSpider-Simple
-[English Version Readme](./README_EN.md)
+**中文说明** | [English](./README_EN.md)
 
-该版本为单机，单账号的简单版本，可以实现每天十万级微博数据的抓取.
+# WeiboSpider
+<a href="https://github.com/nghuyong/WeiboSpider/stargazers">
+    <img src="https://img.shields.io/github/stars/nghuyong/WeiboSpider.svg?colorA=orange&colorB=orange&logo=github"
+         alt="GitHub stars">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/issues">
+        <img src="https://img.shields.io/github/issues/nghuyong/WeiboSpider.svg"
+             alt="GitHub issues">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/">
+        <img src="https://img.shields.io/github/last-commit/nghuyong/WeiboSpider.svg">
+  </a>
+  <a href="https://github.com/nghuyong/WeiboSpider/blob/master/LICENSE">
+        <img src="https://img.shields.io/github/license/nghuyong/WeiboSpider.svg"
+             alt="GitHub license">
+</a>
+
+持续维护的新浪微博爬虫🚀🚀🚀
 
 ## 项目说明
+
+### 版本说明
+该项目分为2个分支，以满足不同的需要
+
+|分支|特点|抓取量|
+|:---:|:---:|:---:|
+|[master](https://github.com/nghuyong/WeiboSpider/tree/master)|单账号,单IP,单机器|十万级|
+|[senior](https://github.com/nghuyong/WeiboSpider/tree/senior)|账号池,IP池,Docker分布式|数亿级(**理论无上限**)|
 
 ### 支持爬虫
 - 用户信息抓取
 - 用户微博抓取
 - 用户社交关系抓取(粉丝/关注)
 - 微博评论抓取
-- 基于关键词和时间段的微博抓取
+- 基于关键词和时间段(粒度到小时)的微博抓取
 - 微博转发抓取
 
 ### 字段说明
@@ -53,7 +77,7 @@ Cookie字段替换成你自己的Cookie
 
 ## 运行程序
 
-可根据自己实际需要重写`./weibospider/spiders/*`中的`start_requests`函数
+**可根据自己实际需要重写`./weibospider/spiders/*`中的`start_requests`函数**
 
 ### 抓取用户信息
 
