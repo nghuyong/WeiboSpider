@@ -36,14 +36,25 @@ class TweetSpider(Spider):
             time_spread = datetime.timedelta(days=1)
             urls = []
             url_format = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}" \
-                         "&advancedfilter=1&starttime={}&endtime={}&sort=time&page=1&atten=1"
-            while date_start < date_end:
-                next_time = date_start + time_spread
-                urls.extend(
-                    [url_format.format(keyword, date_start.strftime("%Y%m%d"), next_time.strftime("%Y%m%d"))
-                     for keyword in keywords]
-                )
-                date_start = next_time
+                         "&advancedfilter=1&starttime={}&endtime={}&sort=time&atten=1&page=1"
+            while date_start <= date_end:
+                for keyword in keywords:
+                    oneday_back = date_start - time_spread
+                    # from today's 7:00-8:00am to 23:00-24:00am
+                    for hour in range(7, 24):
+                        # calculation rule of starting time: start_date 8:00am + offset:16
+                        beginhour = oneday_back.strftime("%Y%m%d") + "-" + str(hour + 16)
+                        # calculation rule of ending time: (end_date+1) 8:00am + offset:-7
+                        endhour = oneday_back.strftime("%Y%m%d") + "-" + str(hour - 7)
+                        urls.append(url_format.format(keyword, beginhour, endhour))
+                    twoday_back = oneday_back - time_spread
+                    # from today's 0:00-1:00am to 6:00-7:00am
+                    for hour in range(0, 7):
+                        # note the offset change bc we are two-days back now
+                        beginhour = twoday_back.strftime("%Y%m%d") + "-" + str(hour + 40)
+                        endhour = twoday_back.strftime("%Y%m%d") + "-" + str(hour + 17)
+                        urls.append(url_format.format(keyword, beginhour, endhour))
+                date_start = date_start + time_spread
             return urls
 
         # select urls generation by the following code
