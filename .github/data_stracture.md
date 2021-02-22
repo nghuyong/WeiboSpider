@@ -17,6 +17,8 @@
 |sentiment|感情状况|
 |vip_level| 会员等级|
 |authentication|认证情况|
+|education|教育经历|
+|work|工作经历|
 |person_url|用户首页链接|
 |labels|用户标签，用逗号分割|
 |crawl_time|抓取时间戳|

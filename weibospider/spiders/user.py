@@ -18,7 +18,7 @@ class UserSpider(Spider):
     base_url = "https://weibo.cn"
 
     def start_requests(self):
-        user_ids = ['1087770692', '1699432410', '1266321801']
+        user_ids = ['1087770692', '1699432410', '1266321801','1749127163']
         urls = [f'{self.base_url}/{user_id}/info' for user_id in user_ids]
         for url in urls:
             yield Request(url, callback=self.parse)
@@ -65,6 +65,14 @@ class UserSpider(Spider):
             user_item["authentication"] = authentication[0].replace(u"\xa0", "")
         if labels and labels[0]:
             user_item["labels"] = labels[0].replace(u"\xa0", ",").replace(';', '').strip(',')
+        education_info = selector.xpath('//div[contains(text(),"学习经历")]/following-sibling::div[1]'). \
+            xpath('string(.)').extract()
+        if education_info:
+            user_item['education'] = education_info[0].replace(u"\xa0", "")
+        work_info = selector.xpath('//div[contains(text(),"工作经历")]/following-sibling::div[1]'). \
+            xpath('string(.)').extract()
+        if work_info:
+            user_item['work'] = work_info[0].replace(u"\xa0", "")
         request_meta = response.meta
         request_meta['item'] = user_item
         yield Request(self.base_url + '/u/{}'.format(user_item['_id']),

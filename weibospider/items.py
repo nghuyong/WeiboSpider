@@ -36,6 +36,8 @@ class UserItem(Item):
     sentiment = Field()  # 感情状况
     vip_level = Field()  # 会员等级
     authentication = Field()  # 认证
+    education = Field()  # 学习经历
+    work = Field()  # 工作经历
     person_url = Field()  # 首页链接
     labels = Field()  # 标签
     crawl_time = Field()  # 抓取时间戳
