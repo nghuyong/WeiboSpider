@@ -13,6 +13,7 @@ from scrapy import Spider
 from scrapy.http import Request
 import time
 from items import TweetItem
+from urllib.parse import unquote
 from spiders.utils import time_fix, extract_weibo_content
 
 
@@ -30,40 +31,23 @@ class TweetSpider(Spider):
 
         def init_url_by_keywords():
             # crawl tweets include keywords in a period, you can change the following keywords and date
-            keywords = ['转基因']
-            date_start = datetime.datetime.strptime("2017-07-30", '%Y-%m-%d')
-            date_end = datetime.datetime.strptime("2018-07-30", '%Y-%m-%d')
+            keywords = ['北京']
+            date_start = datetime.datetime.strptime("2021-01-01", '%Y-%m-%d')
+            date_end = datetime.datetime.strptime("2021-01-02", '%Y-%m-%d')
             time_spread = datetime.timedelta(days=1)
             url_format_by_day = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&starttime={}&endtime={}&atten=1&sort=time&page=1"
-            url_format_by_hour = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&advancedfilter=1&starttime={}&endtime={}&sort=time&atten=1&page=1"
             urls = []
             while date_start <= date_end:
                 for keyword in keywords:
                     # 添加按日的url
                     day_string = date_start.strftime("%Y%m%d")
                     urls.append(url_format_by_day.format(keyword, day_string, day_string))
-                    # 添加按小时的url
-                    one_day_back = date_start - time_spread
-                    # from today's 7:00-8:00am to 23:00-24:00am
-                    for hour in range(7, 24):
-                        # calculation rule of starting time: start_date 8:00am + offset:16
-                        begin_hour = one_day_back.strftime("%Y%m%d") + "-" + str(hour + 16)
-                        # calculation rule of ending time: (end_date+1) 8:00am + offset:-7
-                        end_hour = one_day_back.strftime("%Y%m%d") + "-" + str(hour - 7)
-                        urls.append(url_format_by_hour.format(keyword, begin_hour, end_hour))
-                    two_day_back = one_day_back - time_spread
-                    # from today's 0:00-1:00am to 6:00-7:00am
-                    for hour in range(0, 7):
-                        # note the offset change bc we are two-days back now
-                        begin_hour = two_day_back.strftime("%Y%m%d") + "-" + str(hour + 40)
-                        end_hour = two_day_back.strftime("%Y%m%d") + "-" + str(hour + 17)
-                        urls.append(url_format_by_hour.format(keyword, begin_hour, end_hour))
                 date_start = date_start + time_spread
             return urls
 
         # select urls generation by the following code
-        urls = init_url_by_user_id()
-        # urls = init_url_by_keywords()
+        # urls = init_url_by_user_id()
+        urls = init_url_by_keywords()
         for url in urls:
             yield Request(url, callback=self.parse)
 
@@ -76,6 +60,32 @@ class TweetSpider(Spider):
                 for page_num in range(2, all_page + 1):
                     page_url = response.url.replace('page=1', 'page={}'.format(page_num))
                     yield Request(page_url, self.parse, dont_filter=True, meta=response.meta)
+                # 如果是搜索接口，按照天的粒度结果已经是100页，那继续按照小时的粒度进行切分
+                if 'search/mblog' in response.url and all_page == 100 and '-' not in response.url:
+                    start_time_string = re.search(r'starttime=(\d+)&', unquote(response.url, "utf-8")).group(1)
+                    keyword = re.search(r'keyword=(.*?)&', unquote(response.url, "utf-8")).group(1)
+                    self.logger.info(f'split by hour,{start_time_string},{keyword}, {unquote(response.url, "utf-8")}')
+                    date_start = datetime.datetime.strptime(start_time_string, "%Y%m%d")
+                    time_spread = datetime.timedelta(days=1)
+                    url_format_by_hour = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&advancedfilter=1&starttime={}&endtime={}&sort=time&atten=1&page=1"
+                    one_day_back = date_start - time_spread
+                    # from today's 7:00-8:00am to 23:00-24:00am
+                    for hour in range(7, 24):
+                        # calculation rule of starting time: start_date 8:00am + offset:16
+                        begin_hour = one_day_back.strftime("%Y%m%d") + "-" + str(hour + 16)
+                        # calculation rule of ending time: (end_date+1) 8:00am + offset:-7
+                        end_hour = one_day_back.strftime("%Y%m%d") + "-" + str(hour - 7)
+                        page_url = url_format_by_hour.format(keyword, begin_hour, end_hour)
+                        yield Request(page_url, self.parse, dont_filter=True, meta=response.meta)
+                    two_day_back = one_day_back - time_spread
+                    # from today's 0:00-1:00am to 6:00-7:00am
+                    for hour in range(0, 7):
+                        # note the offset change bc we are two-days back now
+                        begin_hour = two_day_back.strftime("%Y%m%d") + "-" + str(hour + 40)
+                        end_hour = two_day_back.strftime("%Y%m%d") + "-" + str(hour + 17)
+                        page_url = url_format_by_hour.format(keyword, begin_hour, end_hour)
+                        yield Request(page_url, self.parse, dont_filter=True, meta=response.meta)
+
         tree_node = etree.HTML(response.body)
         tweet_nodes = tree_node.xpath('//div[@class="c" and @id]')
         for tweet_node in tweet_nodes:
