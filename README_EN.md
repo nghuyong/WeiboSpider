@@ -19,7 +19,7 @@
 
 Continuously maintained Sina Weibo crawler 🚀🚀🚀
 
-**UPDATE: The one-stop scientific research data service platform [socaisensor.top](http://socialsensor.top/) has been fully launched!! 
+**UPDATE: The one-stop scientific research data service platform [socialsensor.top](http://socialsensor.top/) has been fully launched!! 
 Data acquisition, data analysis, and data application can be realized with just a few clicks. Welcome to try and cooperation👏👏👏**
 
 ## Introduction
