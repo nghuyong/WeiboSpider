@@ -34,7 +34,7 @@ The project has 2 branches to meet different needs:
 
 ### Supported crawling types
 - User Information
-- Tweets post by user
+- Tweets post by user(all / specific period)
 - Users' social relationships (fans/followers)
 - Comments of tweets
 - Tweets based on keywords and time period
@@ -108,15 +108,22 @@ python run_spider.py comment
 ```
 ![](./.github/images/comment-spider.png)
 
-### Crawl Tweets of Users
+### Crawl Tweets of Users(ALL)
 `urls` select `init_url_by_user_id()` in the function of `start_requests` in `./weibospider/spiders/tweet.py`
 ```bash
 python run_spider.py tweet
 ```
 ![](./.github/images/tweet-user-spider.png)
 
+### Crawl Tweets of Users(Specific period)
+`urls` select `init_url_by_user_id_and_date()` in the function of `start_requests` in `./weibospider/spiders/tweet.py`
+```bash
+python run_spider.py tweet
+```
+![](./.github/images/tweet-user-date.png)
+
 ### Crawl Tweets of Specific Keywords and Time
-`urls` select `init_url_by_keywords()` in the function of `start_requests` in `./weibospider/spiders/tweet.py`
+`urls` select `init_url_by_keywords_and_date()` in the function of `start_requests` in `./weibospider/spiders/tweet.py`
 ```bash
 python run_spider.py tweet
 ```

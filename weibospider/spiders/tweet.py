@@ -25,29 +25,55 @@ class TweetSpider(Spider):
 
         def init_url_by_user_id():
             # crawl tweets post by users
+            # === change the following config ===
             user_ids = ['1087770692', '1699432410', '1266321801']
+            # === change the above config ===
             urls = [f'{self.base_url}/{user_id}/profile?page=1' for user_id in user_ids]
             return urls
 
-        def init_url_by_keywords():
-            # crawl tweets include keywords in a period, you can change the following keywords and date
-            keywords = ['北京']
-            date_start = datetime.datetime.strptime("2021-01-01", '%Y-%m-%d')
-            date_end = datetime.datetime.strptime("2021-01-02", '%Y-%m-%d')
-            time_spread = datetime.timedelta(days=1)
-            url_format_by_day = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&starttime={}&endtime={}&atten=1&sort=time&page=1"
+        def init_url_by_user_id_and_date():
+            # crawl specific users' tweets in a specific date
+            # === change the following config ===
+            user_ids = ['1087770692', '1699432410', '1266321801']
+            start_date = datetime.datetime.strptime("2020-01-01", '%Y-%m-%d')
+            end_date = datetime.datetime.strptime("2020-12-31", '%Y-%m-%d')
+            # === change the above config ===
+            time_spread = datetime.timedelta(days=20)
+            url_format = "https://weibo.cn/{}/profile?hasori=0&haspic=0&starttime={}&endtime={}&advancedfilter=1&page=1"
             urls = []
-            while date_start <= date_end:
+            while start_date < end_date:
+                for user_id in user_ids:
+                    start_date_string = start_date.strftime("%Y%m%d")
+                    tmp_end_date = start_date + time_spread
+                    if tmp_end_date >= end_date:
+                        tmp_end_date = end_date
+                    end_date_string = tmp_end_date.strftime("%Y%m%d")
+                    urls.append(url_format.format(user_id, start_date_string, end_date_string))
+                start_date = start_date + time_spread
+            return urls
+
+        def init_url_by_keywords_and_date():
+            # crawl tweets include keywords in a period, you can change the following keywords and date
+            # === change the following config ===
+            keywords = ['北京']
+            start_date = datetime.datetime.strptime("2021-01-01", '%Y-%m-%d')
+            end_date = datetime.datetime.strptime("2021-01-02", '%Y-%m-%d')
+            # === change the above config ===
+            time_spread = datetime.timedelta(days=1)
+            url_format = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&starttime={}&endtime={}&atten=1&sort=time&page=1"
+            urls = []
+            while start_date <= end_date:
                 for keyword in keywords:
                     # 添加按日的url
-                    day_string = date_start.strftime("%Y%m%d")
-                    urls.append(url_format_by_day.format(keyword, day_string, day_string))
-                date_start = date_start + time_spread
+                    day_string = start_date.strftime("%Y%m%d")
+                    urls.append(url_format.format(keyword, day_string, day_string))
+                start_date = start_date + time_spread
             return urls
 
         # select urls generation by the following code
         # urls = init_url_by_user_id()
-        urls = init_url_by_keywords()
+        # urls = init_url_by_keywords_and_date()
+        urls = init_url_by_user_id_and_date()
         for url in urls:
             yield Request(url, callback=self.parse)
 

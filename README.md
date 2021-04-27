@@ -34,7 +34,7 @@
 
 ### 支持爬虫
 - 用户信息抓取
-- 用户微博抓取
+- 用户微博抓取(全量/指定时间段)
 - 用户社交关系抓取(粉丝/关注)
 - 微博评论抓取
 - 基于关键词和时间段(粒度到小时)的微博抓取
@@ -108,15 +108,22 @@ python run_spider.py comment
 ```
 ![](./.github/images/comment-spider.png)
 
-### 抓取用户的微博
+### 抓取用户的微博(全量)
 在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_user_id()`
 ```bash
 python run_spider.py tweet
 ```
 ![](./.github/images/tweet-user-spider.png)
 
+### 抓取用户的微博(指定时间段)
+在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_user_id_and_date()`
+```bash
+python run_spider.py tweet
+```
+![](./.github/images/tweet-user-date.png)
+
 ### 抓取包含关键词的微博
-在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_keywords()`
+在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_keywords_and_date()`
 ```bash
 python run_spider.py tweet
 ```
