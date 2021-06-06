@@ -19,8 +19,7 @@
 
 持续维护的新浪微博爬虫🚀🚀🚀
 
-**UPDATE: 一站式的科研数据服务平台[socialsensor.top](http://socialsensor.top/) 已经全面上线!!
-数据获取，数据开发，数据应用点点鼠标即可实现，欢迎交流合作👏👏👏**
+**UPDATE: weibo.cn的关键词搜索接口已失效（2021.6.6）**
 
 ## 项目说明
 
@@ -122,7 +121,7 @@ python run_spider.py tweet
 ```
 ![](./.github/images/tweet-user-date.png)
 
-### 抓取包含关键词的微博
+### 抓取包含关键词的微博（已失效）
 在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_keywords_and_date()`
 ```bash
 python run_spider.py tweet

@@ -19,8 +19,7 @@
 
 Continuously maintained Sina Weibo crawler 🚀🚀🚀
 
-**UPDATE: The one-stop scientific research data service platform [socialsensor.top](http://socialsensor.top/) has been fully launched!! 
-Data acquisition, data analysis, and data application can be realized with just a few clicks. Welcome to try and cooperation👏👏👏**
+****UPDATE: The keyword search interface of weibo.cn has expired（2021.6.6）****
 
 ## Introduction
 
@@ -122,7 +121,7 @@ python run_spider.py tweet
 ```
 ![](./.github/images/tweet-user-date.png)
 
-### Crawl Tweets of Specific Keywords and Time
+### Crawl Tweets of Specific Keywords and Time（Expired）
 `urls` select `init_url_by_keywords_and_date()` in the function of `start_requests` in `./weibospider/spiders/tweet.py`
 ```bash
 python run_spider.py tweet
