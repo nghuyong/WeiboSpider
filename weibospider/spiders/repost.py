@@ -36,7 +36,7 @@ class RepostSpider(Spider):
                     yield Request(page_url, self.parse, dont_filter=True, meta=response.meta)
         tree_node = etree.HTML(response.body)
         repo_nodes = tree_node.xpath('//div[@class="c" and not(contains(@id,"M_"))]') 
-        for repo_node in repo_nodes:
+        for repo_node in repo_nodes[1:-1]:  # 去掉返回xxx的微博
             repo_user_url = repo_node.xpath('.//a[contains(@href,"/u/")]/@href')
             if not repo_user_url:
                 continue
