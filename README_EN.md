@@ -136,8 +136,14 @@ python run_spider.py repost
 
 ![](./.github/images/repost-spider.png)
 
+### Crawl Tweet
+
+```shell
+python run_spider.py text
+```
 
 ## Last But Not The Least
+
 Based on this project, I have crawled millions weibo active user data, and have built many weibo public opinion datasets: [weibo-public-opinion-datasets](https://github.com/nghuyong/weibo-public-opinion-datasets).
 
 If you have any problems in using the project, you can open an issue to discuss.

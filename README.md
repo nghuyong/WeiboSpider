@@ -136,7 +136,16 @@ python run_spider.py repost
 
 ![](./.github/images/repost-spider.png)
 
+### 抓取指定微博原文
+
+```shell
+python run_spider.py text
+```
+
+
+
 ## 写在最后
+
 基于该项目已经构建千万级别的微博活跃用户数据集，以及海量的微博舆情数据集，现已公开[weibo-public-opinion-datasets](https://github.com/nghuyong/weibo-public-opinion-datasets)
 
 如果您在使用该项目中有任何问题，均可以开issue进行讨论

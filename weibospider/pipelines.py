@@ -13,6 +13,7 @@ class MongoDBPipeline(object):
         self.Comments = db["Comments"]
         self.Relationships = db["Relationships"]
         self.Reposts = db["Reposts"]
+        self.Texts = db["Texts2"]
 
     def process_item(self, item, spider):
         if spider.name == 'comment_spider':
@@ -27,6 +28,8 @@ class MongoDBPipeline(object):
             self.insert_item(self.Tweets, item)
         elif spider.name == 'repost_spider':
             self.insert_item(self.Reposts, item)
+        elif spider.name == 'text_spider':
+            self.insert_item(self.Texts, item)
         return item
 
     @staticmethod
