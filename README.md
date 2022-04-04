@@ -19,17 +19,7 @@
 
 持续维护的新浪微博爬虫🚀🚀🚀
 
-**UPDATE: weibo.cn的关键词搜索接口已失效（2021.6.6）**
-
 ## 项目说明
-
-### 版本说明
-该项目分为2个分支，以满足不同的需要
-
-|分支|特点|抓取量|
-|:---:|:---:|:---:|
-|[master](https://github.com/nghuyong/WeiboSpider/tree/master)|单账号,单IP,单机器|十万级|
-|[senior](https://github.com/nghuyong/WeiboSpider/tree/senior)|账号池,IP池,Docker分布式|数亿级(**理论无上限**)|
 
 ### 支持爬虫
 - 用户信息抓取
@@ -40,7 +30,7 @@
 - 微博转发抓取
 
 ### 字段说明
-项目基于weibo.cn站点抓取，抓取的字段非常丰富。具体请移步:[数据字段说明](./.github/data_stracture.md)
+项目基于[weibo.cn](https://weibo.cn)站点抓取，抓取的字段非常丰富。具体请移步:[数据字段说明](./.github/data_stracture.md)
 
 ## 如何使用
 
@@ -74,7 +64,7 @@ Cookie字段替换成你自己的Cookie
 **如果爬虫运行出现403/302，说明账号被封/cookie失效，请重新替换cookie**
 
 ## 添加代理IP(可选)
-重写[fetch_proxy](./weibospider/middlewares.py#6L)方法，该方法需要返回一个代理ip
+重写[fetch_proxy](./weibospider/middlewares.py#6L)方法，该方法需要返回一个代理ip，具体参考[这里](https://github.com/nghuyong/WeiboSpider/issues/124#issuecomment-654335439)
 
 ## 运行程序
 
@@ -108,25 +98,18 @@ python run_spider.py comment
 ![](./.github/images/comment-spider.png)
 
 ### 抓取用户的微博(全量)
-在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_user_id()`
+在`./weibospider/spiders/tweet.py`中`start_requests`, urls选择`init_url_by_user_id()`
 ```bash
 python run_spider.py tweet
 ```
 ![](./.github/images/tweet-user-spider.png)
 
 ### 抓取用户的微博(指定时间段)
-在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_user_id_and_date()`
+在`./weibospider/spiders/tweet.py`中`start_requests`, urls选择`init_url_by_user_id_and_date()`
 ```bash
 python run_spider.py tweet
 ```
 ![](./.github/images/tweet-user-date.png)
-
-### 抓取包含关键词的微博（已失效）
-在`./weibospider/spiders/tweet.py`中`start_requests`,urls选择`init_url_by_keywords_and_date()`
-```bash
-python run_spider.py tweet
-```
-![](./.github/images/tweet-keyword-spider.png)
 
 ### 抓取微博转发
 
@@ -135,10 +118,3 @@ python run_spider.py repost
 ```
 
 ![](./.github/images/repost-spider.png)
-
-## 写在最后
-基于该项目已经构建千万级别的微博活跃用户数据集，以及海量的微博舆情数据集，现已公开[weibo-public-opinion-datasets](https://github.com/nghuyong/weibo-public-opinion-datasets)
-
-如果您在使用该项目中有任何问题，均可以开issue进行讨论
-
-如果您在社交媒体计算/舆情分析等领域上有好的idea，欢迎一起交流合作: nghuyong@163.com

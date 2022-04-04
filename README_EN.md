@@ -19,17 +19,7 @@
 
 Continuously maintained Sina Weibo crawler 🚀🚀🚀
 
-****UPDATE: The keyword search interface of weibo.cn has expired（2021.6.6）****
-
 ## Introduction
-
-### Branches
-The project has 2 branches to meet different needs:
-
-|Branch|Features|Magnitude of the crawled data|
-|:---:|:---:|:---:|
-|[master](https://github.com/nghuyong/WeiboSpider/tree/master)|Single account, single IP, single machine|Hundreds of thousands|
-|[senior](https://github.com/nghuyong/WeiboSpider/tree/senior)|Account pool, IP pool, Docker|Hundreds of millions(**Theoretical unlimited**)|
 
 ### Supported crawling types
 - User Information
@@ -40,7 +30,7 @@ The project has 2 branches to meet different needs:
 - Retweets following a tweet
 
 ### Data Structure
-The spider based on the `weibo.cn`, and the crawled fields are very rich. More detail:[Data Structure Description](./.github/data_stracture.md)
+The spider based on [weibo.cn](https://weibo.cn), and the crawled fields are very rich. More detail:[Data Structure Description](./.github/data_stracture.md)
 
 ## Get Started
 
@@ -74,7 +64,7 @@ Replace the cookie field with your own cookie
 **If 403/302 appears on the crawler, it means that the account is blocked or the cookie is invalid**
 
 ## Add proxy IP (optional)
-Rewrite the function [fetch_proxy](./weibospider/middlewares.py#6L).
+Rewrite the function [fetch_proxy](./weibospider/middlewares.py#6L), [more details](https://github.com/nghuyong/WeiboSpider/issues/124#issuecomment-654335439)
 
 ## Run the program
 
@@ -121,13 +111,6 @@ python run_spider.py tweet
 ```
 ![](./.github/images/tweet-user-date.png)
 
-### Crawl Tweets of Specific Keywords and Time（Expired）
-`urls` select `init_url_by_keywords_and_date()` in the function of `start_requests` in `./weibospider/spiders/tweet.py`
-```bash
-python run_spider.py tweet
-```
-![](./.github/images/tweet-keyword-spider.png)
-
 ### Crawl Retweet/Repost
 
 ```
@@ -135,11 +118,3 @@ python run_spider.py repost
 ```
 
 ![](./.github/images/repost-spider.png)
-
-
-## Last But Not The Least
-Based on this project, I have crawled millions weibo active user data, and have built many weibo public opinion datasets: [weibo-public-opinion-datasets](https://github.com/nghuyong/weibo-public-opinion-datasets).
-
-If you have any problems in using the project, you can open an issue to discuss.
-
-If you have good ideas on social media computing / public opinion analysis, feel free to email me: nghuyong@163.com
