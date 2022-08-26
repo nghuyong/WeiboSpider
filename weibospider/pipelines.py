@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pymongo
+import json
 from pymongo.errors import DuplicateKeyError
 from settings import MONGO_HOST, MONGO_PORT
 
@@ -35,3 +36,18 @@ class MongoDBPipeline(object):
             collection.insert(dict(item))
         except DuplicateKeyError:
             pass
+
+
+class JsonWriterPipeline(object):
+
+    def open_spider(self, spider):
+        self.file = open('items_follwer.jl', 'w')
+
+    def close_spider(self, spider):
+        self.file.close()
+
+    def process_item(self, item, spider):
+        if spider.name == 'follower_spider':
+            line = json.dumps(dict(item)) + "\n"
+            self.file.write(line)
+            return item

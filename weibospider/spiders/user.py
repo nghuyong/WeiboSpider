@@ -18,7 +18,7 @@ class UserSpider(Spider):
     base_url = "https://weibo.cn"
 
     def start_requests(self):
-        user_ids = ['1087770692', '1699432410', '1266321801','1749127163']
+        user_ids = ['1782800151']
         urls = [f'{self.base_url}/{user_id}/info' for user_id in user_ids]
         for url in urls:
             yield Request(url, callback=self.parse)
