@@ -28,10 +28,10 @@ def time_fix(time_string):
 
 
 keyword_re = re.compile('<span class="kt">|</span>|原图|<!-- 是否进行翻译 -->|<span class="cmt">|\[组图共.+张\]')
-emoji_re = re.compile('<img alt="|" src="//h5\.sinaimg(.*?)/>')
+emoji_re = re.compile('<img alt="|" src="(https:)?//h5\.sinaimg(.*?)/>| style="width:1em; height:1em;" />')
 white_space_re = re.compile('<br />')
 div_re = re.compile('</div>|<div>')
-image_re = re.compile('<img(.*?)/>')
+image_re = re.compile('<img(.*?)/>|<span class="url-icon">')
 url_re = re.compile('<a href=(.*?)>|</a>')
 
 

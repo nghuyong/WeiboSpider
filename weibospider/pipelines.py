@@ -32,6 +32,6 @@ class MongoDBPipeline(object):
     @staticmethod
     def insert_item(collection, item):
         try:
-            collection.insert(dict(item))
+            collection.insert_one(dict(item))
         except DuplicateKeyError:
             pass

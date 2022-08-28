@@ -14,6 +14,7 @@ import time
 from items import RepostItem
 from spiders.utils import extract_repost_content, time_fix
 
+
 class RepostSpider(Spider):
     name = "repost_spider"
     base_url = "https://weibo.cn"
@@ -35,19 +36,20 @@ class RepostSpider(Spider):
                     page_url = response.url.replace('page=1', 'page={}'.format(page_num))
                     yield Request(page_url, self.parse, dont_filter=True, meta=response.meta)
         tree_node = etree.HTML(response.body)
-        repo_nodes = tree_node.xpath('//div[@class="c" and not(contains(@id,"M_"))]') 
+        repo_nodes = tree_node.xpath('//div[@class="c" and not(contains(@id,"M_"))]')
         for repo_node in repo_nodes:
-            repo_user_url = repo_node.xpath('.//a[contains(@href,"/u/")]/@href')
-            if not repo_user_url:
+            try:
+                repo_user_url = repo_node.xpath('.//a[contains(@href,"/")]/@href')
+                if not repo_user_url:
+                    continue
+                repo_item = RepostItem()
+                repo_item['crawl_time'] = int(time.time())
+                repo_item['weibo_id'] = response.url.split('/')[-1].split('?')[0]
+                repo_item['user_id'] = repo_user_url[0].strip('/')
+                content = extract_repost_content(etree.tostring(repo_node, encoding='unicode'))
+                repo_item['content'] = content.split(':', maxsplit=1)[1]
+                created_at_info = repo_node.xpath('.//span[@class="ct"]/text()')[0].split('来自')[0].strip()
+                repo_item['created_at'] = time_fix(created_at_info)
+                yield repo_item
+            except:
                 continue
-            repo_item = RepostItem()
-            #repo_item['_id'] = ''
-            repo_item['crawl_time'] = int(time.time())
-            repo_item['weibo_id'] = response.url.split('/')[-1].split('?')[0]
-            repo_item['user_id'] = re.search(r'/u/(\d+)', repo_user_url[0]).group(1)
-            content = extract_repost_content(etree.tostring(repo_node, encoding='unicode'))
-            repo_item['content'] = content.split(':', maxsplit=1)[1]
-            created_at_info = repo_node.xpath('.//span[@class="ct"]/text()')[0].split('\xa0')
-            repo_item['created_at'] = time_fix((created_at_info[0]+created_at_info[1]))
-            yield repo_item
-            
