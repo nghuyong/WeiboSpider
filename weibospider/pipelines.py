@@ -1,37 +1,27 @@
 # -*- coding: utf-8 -*-
-import pymongo
-from pymongo.errors import DuplicateKeyError
-from settings import MONGO_HOST, MONGO_PORT
+import datetime
+import json
+import time
 
 
-class MongoDBPipeline(object):
+class JsonWriterPipeline(object):
+    """
+    写入json文件的pipline
+    """
+
     def __init__(self):
-        client = pymongo.MongoClient(MONGO_HOST, MONGO_PORT)
-        db = client['weibo']
-        self.Users = db["Users"]
-        self.Tweets = db["Tweets"]
-        self.Comments = db["Comments"]
-        self.Relationships = db["Relationships"]
-        self.Reposts = db["Reposts"]
+        self.file = None
 
     def process_item(self, item, spider):
-        if spider.name == 'comment_spider':
-            self.insert_item(self.Comments, item)
-        elif spider.name == 'fan_spider':
-            self.insert_item(self.Relationships, item)
-        elif spider.name == 'follower_spider':
-            self.insert_item(self.Relationships, item)
-        elif spider.name == 'user_spider':
-            self.insert_item(self.Users, item)
-        elif spider.name == 'tweet_spider':
-            self.insert_item(self.Tweets, item)
-        elif spider.name == 'repost_spider':
-            self.insert_item(self.Reposts, item)
+        """
+        处理item
+        """
+        if not self.file:
+            now = datetime.datetime.now()
+            file_name = spider.name + "_" + now.strftime("%Y%m%d%H%M%S") + '.jsonl'
+            self.file = open(f'../output/{file_name}', 'wt', encoding='utf-8')
+        item['crawl_time'] = int(time.time())
+        line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+        print(json.dumps(dict(item), ensure_ascii=False, indent=4))
+        self.file.write(line)
         return item
-
-    @staticmethod
-    def insert_item(collection, item):
-        try:
-            collection.insert_one(dict(item))
-        except DuplicateKeyError:
-            pass

@@ -1,54 +1,56 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-File Description: 
 Author: nghuyong
 Mail: nghuyong@163.com
 Created Time: 2020/4/14
 """
-import re
-from lxml import etree
+import json
 from scrapy import Spider
 from scrapy.http import Request
-import time
-from items import CommentItem
-from spiders.utils import extract_comment_content, time_fix
+from spiders.common import parse_user_info, parse_time, url_to_mid
 
 
 class CommentSpider(Spider):
-    name = "comment_spider"
-    base_url = "https://weibo.cn"
+    """
+    微博评论数据采集
+    """
+    name = "comment"
 
     def start_requests(self):
-        tweet_ids = ['IDl56i8av', 'IDkNerVCG', 'IDkJ83QaY']
-        urls = [f"{self.base_url}/comment/hot/{tweet_id}?rl=1&page=1" for tweet_id in tweet_ids]
-        for url in urls:
-            yield Request(url, callback=self.parse)
+        """
+        爬虫入口
+        """
+        # 这里tweet_ids可替换成实际待采集的数据
+        tweet_ids = ['Mb15BDYR0']
+        for tweet_id in tweet_ids:
+            mid = url_to_mid(tweet_id)
+            url = f"https://weibo.com/ajax/statuses/buildComments?" \
+                  f"is_reload=1&id={mid}&is_show_bulletin=2&is_mix=0&count=20"
+            yield Request(url, callback=self.parse, meta={'source_url': url})
 
-    def parse(self, response):
-        if response.url.endswith('page=1'):
-            all_page = re.search(r'/>&nbsp;1/(\d+)页</div>', response.text)
-            if all_page:
-                all_page = all_page.group(1)
-                all_page = int(all_page)
-                all_page = all_page if all_page <= 50 else 50
-                for page_num in range(2, all_page + 1):
-                    page_url = response.url.replace('page=1', 'page={}'.format(page_num))
-                    yield Request(page_url, self.parse, dont_filter=True, meta=response.meta)
-        tree_node = etree.HTML(response.body)
-        comment_nodes = tree_node.xpath('//div[@class="c" and contains(@id,"C_")]')
-        for comment_node in comment_nodes:
-            comment_user_url = comment_node.xpath('.//a[contains(@href,"/u/")]/@href')
-            if not comment_user_url:
-                continue
-            comment_item = CommentItem()
-            comment_item['crawl_time'] = int(time.time())
-            comment_item['weibo_id'] = response.url.split('/')[-1].split('?')[0]
-            comment_item['comment_user_id'] = re.search(r'/u/(\d+)', comment_user_url[0]).group(1)
-            comment_item['content'] = extract_comment_content(etree.tostring(comment_node, encoding='unicode'))
-            comment_item['_id'] = comment_node.xpath('./@id')[0]
-            created_at_info = comment_node.xpath('.//span[@class="ct"]/text()')[0]
-            like_num = comment_node.xpath('.//a[contains(text(),"赞[")]/text()')[-1]
-            comment_item['like_num'] = int(re.search('\d+', like_num).group())
-            comment_item['created_at'] = time_fix(created_at_info.split('\xa0')[0])
-            yield comment_item
+    def parse(self, response, **kwargs):
+        """
+        网页解析
+        """
+        data = json.loads(response.text)
+        for comment_info in data['data']:
+            item = self.parse_comment(comment_info)
+            yield item
+        if data.get('max_id', 0) != 0:
+            url = response.meta['source_url'] + '&max_id=' + str(data['max_id'])
+            yield Request(url, callback=self.parse, meta=response.meta)
+
+    @staticmethod
+    def parse_comment(data):
+        """
+        解析comment
+        """
+        item = dict()
+        item['created_at'] = parse_time(data['created_at'])
+        item['_id'] = data['id']
+        item['like_counts'] = data['like_counts']
+        item['ip_location'] = data['source']
+        item['content'] = data['text_raw']
+        item['comment_user'] = parse_user_info(data['user'])
+        return item

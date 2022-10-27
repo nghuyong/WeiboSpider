@@ -1,3 +1,2 @@
-pymongo
 Scrapy
-lxml
+python_dateutil
