@@ -338,5 +338,5 @@ python run_spider.py search
 
 ## 合作联系
 
-- 已构建超大规模数据集WeiboCOV，可免费申请，包含2千万微博活跃用户以及6千万推文数据，具体参见[这里](https://github.com/nghuyong/weibo-public-opinion-datasets)
-- 已构建一站式科研数据平台，涵盖Twitter，微博等诸多站点，点点鼠标即可完成数据采集与分析，具体参见[这里](https://yisukeyan.com/)
+- 已构建超大规模数据集WeiboCOV，可免费申请，包含2千万微博活跃用户以及6千万推文数据，参见[这里](https://github.com/nghuyong/weibo-public-opinion-datasets)
+- 已构建一站式科研数据平台，涵盖Twitter，微博等诸多站点，点点鼠标即可进行数据采集与分析，参见[这里](https://yisukeyan.com/)
