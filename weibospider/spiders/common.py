@@ -4,6 +4,8 @@
 Author: rightyonghu
 Created Time: 2022/10/24
 """
+import json
+
 import dateutil.parser
 
 
@@ -97,9 +99,22 @@ def parse_tweet_info(data):
         "content": data['text_raw'].replace('\u200b', ''),
         "pic_urls": ["https://wx1.sinaimg.cn/orj960/" + pic_id for pic_id in data.get('pic_ids', [])],
         "pic_num": data['pic_num'],
+        'isLongText': False,
         "user": parse_user_info(data['user']),
     }
     if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
         tweet['video'] = data['page_info']['media_info']['mp4_720p_mp4']
     tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
+    if 'continue_tag' in data and data['isLongText']:
+        tweet['isLongText'] = True
     return tweet
+
+
+def parse_long_tweet(response):
+    """
+    解析长推文
+    """
+    data = json.loads(response.text)['data']
+    item = response.meta['item']
+    item['content'] = data['longTextContent']
+    yield item

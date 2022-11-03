@@ -7,7 +7,7 @@ Created Time: 2022/10/22
 import json
 import re
 from scrapy import Spider, Request
-from spiders.common import parse_tweet_info
+from spiders.common import parse_tweet_info, parse_long_tweet
 
 
 class SearchSpider(Spider):
@@ -55,4 +55,8 @@ class SearchSpider(Spider):
         data = json.loads(response.text)
         item = parse_tweet_info(data)
         item['keyword'] = response.meta['keyword']
-        yield item
+        if item['isLongText']:
+            url = "https://weibo.com/ajax/statuses/longtext?id=" + item['mblogid']
+            yield Request(url, callback=parse_long_tweet, meta={'item': item})
+        else:
+            yield item
