@@ -338,6 +338,6 @@ python run_spider.py search
 - 2022.10: 添加IP归属地信息的采集，包括用户数据，微博数据和微博评论数据
 - 2022.10: 基于weibo.com站点对项目进行重构
 
-## 合作联系
+## 其他工作
 
 - 已构建超大规模数据集WeiboCOV，可免费申请，包含2千万微博活跃用户以及6千万推文数据，参见[这里](https://github.com/nghuyong/weibo-public-opinion-datasets)
