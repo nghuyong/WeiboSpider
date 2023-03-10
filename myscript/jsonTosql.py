@@ -2,6 +2,7 @@
 
 import json
 import pymysql
+import emoji
 
 # 连接数据库
 conn = pymysql.connect(
@@ -19,10 +20,15 @@ conn = pymysql.connect(
 
 cur = conn.cursor()
 
+# # 插入的表名
+table = 'weibo.t_follow_userprofile'
+
 # 建表语句，字段要与json中的key值对应
-createTableSql = 'CREATE table IF NOT EXISTS weibo.t_fan_userprofile(uid varchar(20), nick_name varchar(20), location varchar(20), birthday varchar(20) default null, created_at varchar(20) default null, ip_location varchar(20) default null) ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+# createTableSql = f'CREATE table IF NOT EXISTS {table}(uid varchar(20), nick_name varchar(20), location varchar(20), birthday varchar(20) default null, created_at varchar(20) default null, ip_location varchar(20) default null) ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+
+
 # json在我本地的路径
-jsonPath = '/Users/yunpeng/Desktop/content/WeiboSpider/output/user_spider_20230209213322.jsonl'
+jsonPath = '/Users/yunpeng/Desktop/content/WeiboSpider/output/user_batch_spider_20230310154305.jsonl'
 
 # 打开json文件
 with open(jsonPath, 'r', encoding='utf_8_sig') as f:
@@ -32,39 +38,46 @@ with open(jsonPath, 'r', encoding='utf_8_sig') as f:
         dic = json.loads(line)
 
         # 不需要的表头
-        noNeedColums = ['verified_type', 'verified_reason', 'crawl_time']
+        del_colum = ['verified_type', 'verified_reason', 'crawl_time']
         # 需要添加的表头
-        needAddColums = ['company', 'education']
-        for notclm in noNeedColums:
-            if (notclm in dic):
-                 dic.pop(notclm)
+        add_colum = ['company', 'education']
 
-        for needclm in needAddColums:
-            if (needclm in dic):
-                temp = dic[needclm]
-                dic.pop(needclm)
-                dic[needclm] = temp
-            if (needclm not in dic):
-                 dic[needclm] = 'null'
+        for item in del_colum:
+            if item in dic:
+                dic.pop(item)
 
-        # 剔除空list
-        for eitem in dic:
-            if(isinstance(dic[eitem], list)):
-                if len(dic[eitem]) == 0:
-                    dic[eitem] = 'null'
-            if (isinstance(dic[eitem], dict)):
-                dic[eitem] = str(dic[eitem])
-                # print(type(dic[eitem]), ))
+        for item in add_colum:
+            if item in dic:
+                # 因为表顺序已经固定，所以只能按照add_colum 的顺序去定义 赋值
+                temp = dic[item]
+                dic.pop(item)
+                dic[item] = temp
+            if item not in dic:
+                dic[item] = 'null'
 
-
+        # 剔除键值为空的list
+        for item in dic:
+            # 如果数组为空，则复制为null
+            if isinstance(dic[item], list):
+                if len(dic[item]) == 0:
+                    dic[item] = 'null'
+            # 如果键值为dict, 则转化为字符串
+            if isinstance(dic[item], dict):
+                dic[item] = str(dic[item])
+            # 去除 label_desc的特殊字符
+            if isinstance(dic[item], list):
+                dic[item] = ''.join(dic[item]).replace('，', ' & ')
 
         # 拼接key值为：name,age
         keys = ','.join(dic.keys())
 
-
         # 将value值存为列表类型：['tom', '28'] <class 'list'>
         valuesList = [dici for dici in dic.values()]
 
+        # 剔除emoji表情
+        for i in range(len(valuesList)):
+            if isinstance(valuesList[i], str):
+                valuesList[i] = emoji.demojize(valuesList[i])
 
         # 将value值存为元组类型：('tom', '28')
         valuesTuple = tuple(valuesList)
@@ -72,24 +85,18 @@ with open(jsonPath, 'r', encoding='utf_8_sig') as f:
         # 拼接values为：%s, %s
         values = ', '.join(['%s'] * len(dic))
 
-
-        # # 插入的表名
-        table = 'weibo.t_fan_userprofile'
-        #
         # 插入sql语句
         insertSql = 'INSERT INTO {table}({keys}) VALUES ({values})'.format(table=table, keys=keys, values=values)
         print(insertSql, valuesTuple)
         #
-        # 执行建表与插入sql
+        # 执行建表
+        # 放在sql文件内执行
         # cur.execute(createTableSql)
+
+        # 插入到sql
         cur.execute(insertSql, valuesTuple)
-        #
         # 提交commit
         conn.commit()
 
     # 关闭数据库连接
     conn.close()
-
-
-
-

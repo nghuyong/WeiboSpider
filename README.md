@@ -37,6 +37,13 @@
     <p>持续维护的新浪微博采集工具🚀🚀🚀</p>
 </h4>
 
+## 补充
+- cookie.txt 处于失效状态，需更新为有效的
+- batchUser 批量从json文件内获取userid,去获得其user profile
+- 将user profile的信息，导入到数据库内 
+- mysql -u root -p < user.sql , 需要注意表名，需要与jsonTosql.py内的table的变量一致
+- 然后执行jsonTosql.py文件
+
 
 ## 项目特色
 

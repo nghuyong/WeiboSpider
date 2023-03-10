@@ -1,2 +1,4 @@
 Scrapy
 python_dateutil
+pymysql
+emoji

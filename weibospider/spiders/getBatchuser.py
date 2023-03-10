@@ -11,12 +11,11 @@ from scrapy.http import Request
 from spiders.common import parse_user_info
 
 
-
-class UserSpider(Spider):
+class UserBatchSpider(Spider):
     """
     微博用户信息爬虫
     """
-    name = "user_spider"
+    name = "user_batch_spider"
     base_url = "https://weibo.cn"
 
     def start_requests(self):
@@ -24,20 +23,23 @@ class UserSpider(Spider):
         爬虫入口
         """
         # 数据路径
-        path = '/Users/yunpeng/Desktop/content/WeiboSpider/output/fan_20230209205823.jsonl'
-        fan_all_useId = []
-        def parse(path):
-            g = open(path, 'rb')
-            for l in g:
-                yield json.loads(l)
+        # 指定选定的Json数据
+        path = '/Users/yunpeng/Desktop/content/WeiboSpider/output/follower_20230310152918.jsonl'
+        fan_all_userid = []
+
+        def parse_json(parse_path):
+            g = open(parse_path, 'rb')
+            for ls in g:
+                yield json.loads(ls)
+
         # 读取每条数据
-        for d in parse(path):
-            fan_all_useId.append(d.get('fan_info').get('_id'))
+        for d in parse_json(path):
+            # get内的参数 参考json文件内 动态修改就可以。
+            fan_all_userid.append(d.get('follower_info').get('_id'))
 
         # 这里user_ids可替换成实际待采集的数据
-        # user_ids = ['2967082625']
         # 改为批量
-        urls = [f'https://weibo.com/ajax/profile/info?uid={user_id}' for user_id in fan_all_useId]
+        urls = [f'https://weibo.com/ajax/profile/info?uid={user_id}' for user_id in fan_all_userid]
         for url in urls:
             yield Request(url, callback=self.parse)
 
