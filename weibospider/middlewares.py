@@ -1,4 +1,5 @@
 # encoding: utf-8
+from scrapy.exceptions import CloseSpider, StopDownload
 
 
 class IPProxyMiddleware(object):
@@ -40,18 +41,29 @@ class CookiePoolMiddleware():
         with open('cookies.txt') as f:
             self.pool = f.readlines()
 
-    def get_cookie(self) -> str:
-        """
-        获取cookie，从cookie池中轮流返回调用
-        """
-
-        cookie = self.pool[self.i]
-        self.i = (self.i + 1) % len(self.pool)
-        return cookie
-
     def process_request(self, request, spider):
         """
         对请求设置cookie
         """
 
-        request.headers['Cookie'] = bytes(self.get_cookie(), 'utf-8')
+        cookie = self.pool[self.i]
+        self.i = (self.i + 1) % len(self.pool)
+        request.headers['Cookie'] = bytes(cookie, 'utf-8')
+
+    def process_response(self, request, response, spider):
+        """
+        验证cookie是否过期，处理过期cookie
+        """
+
+        if spider.name == 'search_spider' and response.status in [301, 302]:
+            if len(self.pool) == 1:
+                spider.logger.warn('No cookie available!')
+                StopDownload()
+            spider.logger.warn(f"Cookie expired: {request.headers['cookie']}")
+            self.pool.remove(request.headers['cookie'].decode('utf-8'))
+            # Cookie expired, request again
+            request.headers['cookie'] = self.pool[0]
+            request.dont_filter = True
+            return request
+        else:
+            return response
