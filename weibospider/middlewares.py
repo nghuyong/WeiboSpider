@@ -1,5 +1,5 @@
 # encoding: utf-8
-from scrapy.exceptions import CloseSpider, StopDownload
+from scrapy.exceptions import StopDownload
 
 
 class IPProxyMiddleware(object):
