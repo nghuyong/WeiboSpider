@@ -41,7 +41,7 @@ class SearchSpider(Spider):
         网页解析
         """
         html = response.text
-        tweet_ids = re.findall(r'\d+/(.*?)\?refer_flag=1001030103_" ', html)
+        tweet_ids = re.findall(r'weibo\.com/\d+/(.+?)\?refer_flag=1001030103_" ', html)
         for tweet_id in tweet_ids:
             url = f"https://weibo.com/ajax/statuses/show?id={tweet_id}"
             yield Request(url, callback=self.parse_tweet, meta=response.meta)
