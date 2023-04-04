@@ -24,3 +24,34 @@ class IPProxyMiddleware(object):
             current_proxy = f'http://{proxy_data}'
             spider.logger.debug(f"current proxy:{current_proxy}")
             request.meta['proxy'] = current_proxy
+
+class CookiePoolMiddleware():
+    """
+    Cookie池中间件
+    """
+
+    def __init__(self):
+        """
+        Middleware初始化，加载文件中的所有cookie。
+        """
+
+        self.pool = []
+        self.i = 0
+        with open('cookies.txt') as f:
+            self.pool = f.readlines()
+
+    def get_cookie(self) -> str:
+        """
+        获取cookie，从cookie池中轮流返回调用
+        """
+
+        cookie = self.pool[self.i]
+        self.i = (self.i + 1) % len(self.pool)
+        return cookie
+
+    def process_request(self, request, spider):
+        """
+        对请求设置cookie
+        """
+
+        request.headers['Cookie'] = bytes(self.get_cookie(), 'utf-8')

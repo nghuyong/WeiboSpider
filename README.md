@@ -60,7 +60,9 @@ pip install -r requirements.txt
 
 ![](.github/cookie.png)
 
-复制`weibo.com`数据包，network中的cookie值。编辑`weibospider/cookie.txt`并替换成刚刚复制的Cookie
+复制`weibo.com`数据包，network中的cookie值。编辑`weibospider/cookies.txt`并替换成刚刚复制的Cookie。
+
+可添加多个cookie（一行一个）并适当调整`settings.py`文件中的`DOWNLOAD_DELAY`提高爬取效率。
 
 ### 添加代理IP(可选)
 
