@@ -18,10 +18,28 @@ class SearchSpider(Spider):
     name = "search_spider"
     base_url = "https://s.weibo.com/"
 
-    # 这里keywords可替换成实际待采集的数据
-    keyword = '丽江'
+    ###################### 可配置参数 ######################
+    keyword = '丽江'    # 检索关键词
     start_time = "2023-04-01-00"        # format: yyyy-mm-dd-hh
     end_time = "2023-04-04-23"
+
+    #---- 检索内容类型 ----#
+    # all:      全部
+    # hot:      热门
+    # ori:      原创
+    # verify:   认证用户
+    # media:    媒体
+    #--------------------#
+    content_type = 'all'
+
+    #--- 检索内容限定包含 ---#
+    # all:      全部
+    # pic:      图片
+    # video:    视频
+    # link:     短链
+    #----------------------#
+    content_inclue = 'all'
+    ######################################################
 
     def start_requests(self):
         """
@@ -29,18 +47,27 @@ class SearchSpider(Spider):
         """
 
         dt_parse_str = '%Y-%m-%d-%H'
-        # TODO set sort methods
-        # is_sort_by_hot = True               # 是否按照热度排序,默认按照时间排序
+        content_type_dict = {
+            'all': '',
+            'hot': '&xsort=hot',
+            'ori': '&scope=ori',
+            'verify': 'vip=1',
+            'media': 'category=4'
+        }
+        content_include_dict = {
+            'all': '',
+            'pic': '&haspic=1',
+            'vedio': '&hasvideo=1',
+            'link': '&haslink=1'
+        }
 
+        # format datetime
         start_dt = datetime.strptime(self.start_time, dt_parse_str)
         end_dt = datetime.strptime(self.end_time, dt_parse_str)
         ahour_delta = timedelta(hours=1)
-
         dt = start_dt
         while(dt < end_dt):
-            url = f"https://s.weibo.com/weibo?q={self.keyword}&timescope=custom%:{dt.strftime(dt_parse_str)}:{(dt + ahour_delta).strftime(dt_parse_str)}"
-            # if is_sort_by_hot:
-            #     url += "&xsort=hot"
+            url = f"https://s.weibo.com/weibo?q={self.keyword}&timescope=custom%:{dt.strftime(dt_parse_str)}:{(dt + ahour_delta).strftime(dt_parse_str)}{content_type_dict[self.content_type]}{content_include_dict[self.content_inclue]}"
             yield Request(url, callback=self.parse, meta={'keyword': self.keyword})
             dt += ahour_delta
 
