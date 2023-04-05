@@ -46,6 +46,15 @@ class SearchSpider(Spider):
         爬虫入口
         """
 
+        self.logger.info(
+            f'Search spider start...\n' +
+            f'--- keyword: {self.keyword}\n' +
+            f'--- from: {self.start_time}\n' +
+            f'--- to: {self.end_time}\n' +
+            f'--- content type: {self.content_type}\n' +
+            f'--- content include: {self.content_inclue}'
+        )
+
         dt_parse_str = '%Y-%m-%d-%H'
         content_type_dict = {
             'all': '',
@@ -67,6 +76,7 @@ class SearchSpider(Spider):
         ahour_delta = timedelta(hours=1)
         dt = start_dt
         while(dt < end_dt):
+            self.logger.info(f'Crawling: {dt.strftime(dt_parse_str)} - {(dt + ahour_delta).strftime(dt_parse_str)}')
             url = f"https://s.weibo.com/weibo?q={self.keyword}&timescope=custom%:{dt.strftime(dt_parse_str)}:{(dt + ahour_delta).strftime(dt_parse_str)}{content_type_dict[self.content_type]}{content_include_dict[self.content_inclue]}"
             yield Request(url, callback=self.parse, meta={'keyword': self.keyword})
             dt += ahour_delta

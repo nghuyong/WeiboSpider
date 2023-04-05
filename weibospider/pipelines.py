@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import datetime
+from datetime import datetime
 import json
-import os.path
 import time
 
 
@@ -11,9 +10,7 @@ class JsonlWriterPipeline(object):
     """
 
     def open_spider(self, spider):
-        if not os.path.exists('../output'):
-            os.mkdir('../output')
-        now_str = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        now_str = datetime.now().strftime("%Y%m%d%H%M%S")
         # TODO format other spider file name
         if spider.name == 'search_spider':
             # search spider file name format: search_<keyword>_<content_type>_<content_include>_<start_time>_<end_time>_<crawl_time>.jsonl

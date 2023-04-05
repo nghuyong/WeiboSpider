@@ -19,6 +19,10 @@ from spiders.search import SearchSpider
 
 if __name__ == '__main__':
     mode = sys.argv[1]
+    if not os.path.exists('../output'):
+        os.mkdir('../output')
+    if not os.path.exists('../log'):
+        os.mkdir('../log')
     os.environ['SCRAPY_SETTINGS_MODULE'] = 'settings'
     settings = get_project_settings()
     process = CrawlerProcess(settings)

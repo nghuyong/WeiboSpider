@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 
 BOT_NAME = 'spider'
 
@@ -29,3 +31,8 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'pipelines.JsonlWriterPipeline': 300,
 }
+
+LOG_LEVEL = 'INFO'
+LOG_FILE = f'../log/{datetime.now().strftime("%Y-%m-%d")}.log'
+
+REQUEST_FINGERPRINTER_IMPLEMENTATION = '2.7'
