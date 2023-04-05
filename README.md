@@ -60,9 +60,16 @@ pip install -r requirements.txt
 
 ![](.github/cookie.png)
 
-复制`weibo.com`数据包，network中的cookie值。编辑`weibospider/cookies.txt`并替换成刚刚复制的Cookie。
+复制`weibo.com`数据包，network中的cookie值，右键copy value。编辑`weibospider/cookies.txt`并替换成刚刚复制的Cookie。
 
-可添加多个cookie（一行一个）并适当调整`settings.py`文件中的`DOWNLOAD_DELAY`提高爬取效率。
+### 多个cookie（可选）
+微博有较为严格的反爬措施，对单个cookie设置了访问频率限制（大约1次/秒），可收集多个帐号cookie提高爬取效率。
+
+将多个cookie粘贴至`weibospider/cookies.txt`中，一行一个，适当调整`settings.py`文件中的`DOWNLOAD_DELAY`和`CONCURRENT_REQUESTS`。
+
+推荐设置：
+ - `CONCURRENT_REQUESTS`：当cookie数小于8时，将设置为cookies个数，cookie个数大于8时设置为8
+ - `DOWNLOAD_DELAY`：设置为cookies个数的倒数。例如拥有1个cookie时设置为1，拥有8个cookie时设置为0.2（每cookie访问频率不超过1次/秒）
 
 ### 添加代理IP(可选)
 
@@ -73,7 +80,7 @@ pip install -r requirements.txt
 
 根据自己实际需要重写`./weibospider/spiders/*`中的`start_requests`函数
 
-采集的数据存在`output`文件中，命名为`{spider.name}_{datetime}.jsonl`
+采集的数据输出在`output`文件夹中，命名为`{spider.name}_{datetime}.jsonl`
 
 ### 用户信息采集
 

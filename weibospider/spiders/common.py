@@ -53,6 +53,7 @@ def parse_time(s):
     """
     Wed Oct 19 23:44:36 +0800 2022 => 2022-10-19 23:44:36
     """
+    # FIXME - use datetime of python self
     return dateutil.parser.parse(s).strftime('%Y-%m-%d %H:%M:%S')
 
 
@@ -97,11 +98,19 @@ def parse_tweet_info(data):
         "attitudes_count": data['attitudes_count'],
         "source": data['source'],
         "content": data['text_raw'].replace('\u200b', ''),
-        "pic_urls": ["https://wx1.sinaimg.cn/orj960/" + pic_id for pic_id in data.get('pic_ids', [])],
         "pic_num": data['pic_num'],
         'isLongText': False,
         "user": parse_user_info(data['user']),
     }
+    # pic urls
+    if tweet['pic_num'] != 0:
+        tweet['pic_urls'] = ["https://wx1.sinaimg.cn/orj960/" + pic_id for pic_id in data.get('pic_ids', [])]
+    # video url
+    # FIXME
+    # 1. some is page_info.media_info, some is page_info.cards.media_info
+    # 2. stream_url may be more common
+    # 3. consider use reg achieve this goal
+    # https://weibo.com/ajax/statuses/show?id=MAfiG5Itl
     if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
         tweet['video'] = data['page_info']['media_info']['mp4_720p_mp4']
     tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
@@ -116,5 +125,8 @@ def parse_long_tweet(response):
     """
     data = json.loads(response.text)['data']
     item = response.meta['item']
+    # FIXME - KeyError: 'longTextContent'
+    # https://weibo.com/ajax/statuses/longtext?id=MA5F3ehqz
+    # no problem with browser check, do not know reason
     item['content'] = data['longTextContent']
     yield item

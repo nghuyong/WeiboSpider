@@ -18,7 +18,7 @@ CONCURRENT_REQUESTS = 8
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
-DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY = 1
 
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
@@ -33,6 +33,6 @@ ITEM_PIPELINES = {
 }
 
 LOG_LEVEL = 'INFO'
-LOG_FILE = f'../log/{datetime.now().strftime("%Y-%m-%d")}.log'
+LOG_FILE = f'../log/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log'
 
 REQUEST_FINGERPRINTER_IMPLEMENTATION = '2.7'

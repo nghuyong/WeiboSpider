@@ -19,10 +19,10 @@ class SearchSpider(Spider):
     base_url = "https://s.weibo.com/"
 
     ###################### 可配置参数 ######################
-    keyword = '丽江'    # 检索关键词
+    keyword = '北京'    # 检索关键词
     # format: yyyy-mm-dd-hh
-    tf = "2023-04-01-00"    # time from
-    tt = "2023-04-04-23"    # time to
+    tf = "2023-03-28-00"    # time from
+    tt = "2023-04-05-00"    # time to
 
     #---- 检索内容类型 ----#
     # default:  默认
@@ -87,8 +87,6 @@ class SearchSpider(Spider):
             f'--- content include: {self.ci}'
         )
 
-
-
         # format datetime
         dt_from = datetime.strptime(self.tf, self.dt_parse_format)
         dt_to = datetime.strptime(self.tt, self.dt_parse_format)
@@ -98,6 +96,9 @@ class SearchSpider(Spider):
         while(dt < dt_to):
             # traverse search content type and content include
             # scrapy会自动过滤重复web请求，最终爬取到的数据不会冗余
+            dt_str_from = dt.strftime(self.dt_parse_format)
+            dt_str_to = (dt + timedelta(hours=1)).strftime(self.dt_parse_format)
+            self.logger.info(f"Crawling: keyword={self.keyword} timescope=:{dt_str_from}:{dt_str_to}")
             if self.ct == 'all' and self.ci == 'all':
                 for ct in self.ctd.values():
                     for ci in self.cid.values():
@@ -126,10 +127,6 @@ class SearchSpider(Spider):
             f"{ct}" +
             f"{ci}"
         )
-        self.logger.info(f"Crawling: keyword={self.keyword} timescope=:{dt_str_from}:{dt_str_to} " +
-                            f"content_type={self.ctdr[ct]} " +
-                            f"content_include={self.cidr[ci]}"
-                        )
         return Request(url, meta={'keyword': self.keyword})
 
     def parse(self, response, **kwargs):
@@ -139,15 +136,16 @@ class SearchSpider(Spider):
 
         html = response.text
         if 'card-no-result' in html:
-            yield
-        tweet_ids = re.findall(r'weibo\.com/\d+/(.+?)\?refer_flag=1001030103_" ', html)
-        for tweet_id in tweet_ids:
-            url = f"https://weibo.com/ajax/statuses/show?id={tweet_id}"
-            yield Request(url, callback=self.parse_tweet, meta=response.meta, priority=9)
-        next_page = re.search('<a href="(.*?)" class="next">下一页</a>', html)
-        if next_page:
-            url = "https://s.weibo.com" + next_page.group(1)
-            yield Request(url, callback=self.parse, meta=response.meta, priority=8)
+            pass
+        else:
+            tweet_ids = re.findall(r'weibo\.com/\d+/(.+?)\?refer_flag=1001030103_" ', html)
+            for tweet_id in tweet_ids:
+                url = f"https://weibo.com/ajax/statuses/show?id={tweet_id}"
+                yield Request(url, callback=self.parse_tweet, meta=response.meta, priority=9)
+            next_page = re.search('<a href="(.*?)" class="next">下一页</a>', html)
+            if next_page:
+                url = "https://s.weibo.com" + next_page.group(1)
+                yield Request(url, callback=self.parse, meta=response.meta, priority=8)
 
     @staticmethod
     def parse_tweet(response):

@@ -2,3 +2,4 @@ output
 __pycache__
 .vscode
 log
+.DS_Store
