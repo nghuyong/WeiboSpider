@@ -20,26 +20,58 @@ class SearchSpider(Spider):
 
     ###################### 可配置参数 ######################
     keyword = '丽江'    # 检索关键词
-    start_time = "2023-04-01-00"        # format: yyyy-mm-dd-hh
-    end_time = "2023-04-04-23"
+    # format: yyyy-mm-dd-hh
+    tf = "2023-04-01-00"    # time from
+    tt = "2023-04-04-23"    # time to
 
     #---- 检索内容类型 ----#
-    # all:      全部
+    # default:  默认
     # hot:      热门
     # ori:      原创
     # verify:   认证用户
     # media:    媒体
+    # all:      全部
     #--------------------#
-    content_type = 'all'
+    ct = 'all'  # content type
 
     #--- 检索内容限定包含 ---#
-    # all:      全部
+    # default:  默认
     # pic:      图片
     # video:    视频
     # link:     短链
+    # all:      全部
     #----------------------#
-    content_inclue = 'all'
+    ci = 'all'  # content include
     ######################################################
+
+    dt_parse_format = '%Y-%m-%d-%H'
+    ctd = {     # content type dict
+        'default': '',
+        'hot': '&xsort=hot',
+        'ori': '&scope=ori',
+        'verify': 'vip=1',
+        'media': 'category=4'
+    }
+    cid = {     # content include dict
+        'default': '',
+        'pic': '&haspic=1',
+        'video': '&hasvideo=1',
+        'link': '&haslink=1'
+    }
+
+    ctdr = {    # content type dict reverse, for log
+        '': 'default',
+        '&xsort=hot': 'hot',
+        '&scope=ori': 'ori',
+        'vip=1': 'verify',
+        'category=4': 'media'
+    }
+    cidr = {    # content include dict reverse, for log
+        '': 'default',
+        '&haspic=1': 'pic',
+        '&hasvideo=1': 'vedio',
+        '&haslink=1': 'link'
+    }
 
     def start_requests(self):
         """
@@ -49,37 +81,56 @@ class SearchSpider(Spider):
         self.logger.info(
             f'Search spider start...\n' +
             f'--- keyword: {self.keyword}\n' +
-            f'--- from: {self.start_time}\n' +
-            f'--- to: {self.end_time}\n' +
-            f'--- content type: {self.content_type}\n' +
-            f'--- content include: {self.content_inclue}'
+            f'--- from: {self.tf}\n' +
+            f'--- to: {self.tt}\n' +
+            f'--- content type: {self.ct}\n' +
+            f'--- content include: {self.ci}'
         )
 
-        dt_parse_str = '%Y-%m-%d-%H'
-        content_type_dict = {
-            'all': '',
-            'hot': '&xsort=hot',
-            'ori': '&scope=ori',
-            'verify': 'vip=1',
-            'media': 'category=4'
-        }
-        content_include_dict = {
-            'all': '',
-            'pic': '&haspic=1',
-            'vedio': '&hasvideo=1',
-            'link': '&haslink=1'
-        }
+
 
         # format datetime
-        start_dt = datetime.strptime(self.start_time, dt_parse_str)
-        end_dt = datetime.strptime(self.end_time, dt_parse_str)
-        ahour_delta = timedelta(hours=1)
-        dt = start_dt
-        while(dt < end_dt):
-            self.logger.info(f'Crawling: {dt.strftime(dt_parse_str)} - {(dt + ahour_delta).strftime(dt_parse_str)}')
-            url = f"https://s.weibo.com/weibo?q={self.keyword}&timescope=custom%:{dt.strftime(dt_parse_str)}:{(dt + ahour_delta).strftime(dt_parse_str)}{content_type_dict[self.content_type]}{content_include_dict[self.content_inclue]}"
-            yield Request(url, callback=self.parse, meta={'keyword': self.keyword})
-            dt += ahour_delta
+        dt_from = datetime.strptime(self.tf, self.dt_parse_format)
+        dt_to = datetime.strptime(self.tt, self.dt_parse_format)
+        dt = dt_from
+
+        # traverse timescope
+        while(dt < dt_to):
+            # traverse search content type and content include
+            # scrapy会自动过滤重复web请求，最终爬取到的数据不会冗余
+            if self.ct == 'all' and self.ci == 'all':
+                for ct in self.ctd.values():
+                    for ci in self.cid.values():
+                        yield self.search_req(dt, ct, ci)
+            elif self.ci == 'all':
+                for ci in self.cid.values():
+                    yield self.search_req(dt, self.ctd[self.ct], ci)
+            elif self.ct == 'all':
+                for ct in self.ctd.values():
+                    yield self.search_req(dt, ct, self.cid[self.ci])
+            else:
+                yield self.search_req(dt, self.ctd[self.ct], self.cid[self.ci])
+            dt += timedelta(hours=1)
+
+    def search_req(self, dt, ct, ci):
+        """
+        拼接url，返回search请求
+        """
+
+        dt_str_from = dt.strftime(self.dt_parse_format)
+        dt_str_to = (dt + timedelta(hours=1)).strftime(self.dt_parse_format)
+
+        url = (
+            f"https://s.weibo.com/weibo?q={self.keyword}" +
+            f"&timescope=custom%:{dt_str_from}:{dt_str_to}" +
+            f"{ct}" +
+            f"{ci}"
+        )
+        self.logger.info(f"Crawling: keyword={self.keyword} timescope=:{dt_str_from}:{dt_str_to} " +
+                            f"content_type={self.ctdr[ct]} " +
+                            f"content_include={self.cidr[ci]}"
+                        )
+        return Request(url, meta={'keyword': self.keyword})
 
     def parse(self, response, **kwargs):
         """
@@ -88,7 +139,7 @@ class SearchSpider(Spider):
 
         html = response.text
         if 'card-no-result' in html:
-            return
+            yield
         tweet_ids = re.findall(r'weibo\.com/\d+/(.+?)\?refer_flag=1001030103_" ', html)
         for tweet_id in tweet_ids:
             url = f"https://weibo.com/ajax/statuses/show?id={tweet_id}"
