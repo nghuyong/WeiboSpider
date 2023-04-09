@@ -9,6 +9,7 @@ import re
 from datetime import datetime, timedelta
 from scrapy import Spider, Request
 from spiders.common import parse_tweet_info, parse_long_tweet
+from scrapy.exceptions import StopDownload
 
 
 class SearchSpider(Spider):
@@ -21,8 +22,8 @@ class SearchSpider(Spider):
     ###################### 可配置参数 ######################
     keyword = '北京'    # 检索关键词
     # format: yyyy-mm-dd-hh
-    tf = "2023-03-28-00"    # time from
-    tt = "2023-04-05-00"    # time to
+    tf = "2023-04-01-00"    # time from
+    tt = "2023-04-08-00"    # time to
 
     #---- 检索内容类型 ----#
     # default:  默认
@@ -49,8 +50,8 @@ class SearchSpider(Spider):
         'default': '',
         'hot': '&xsort=hot',
         'ori': '&scope=ori',
-        'verify': 'vip=1',
-        'media': 'category=4'
+        'verify': '&vip=1',
+        'media': '&category=4'
     }
     cid = {     # content include dict
         'default': '',
@@ -59,27 +60,13 @@ class SearchSpider(Spider):
         'link': '&haslink=1'
     }
 
-    ctdr = {    # content type dict reverse, for log
-        '': 'default',
-        '&xsort=hot': 'hot',
-        '&scope=ori': 'ori',
-        'vip=1': 'verify',
-        'category=4': 'media'
-    }
-    cidr = {    # content include dict reverse, for log
-        '': 'default',
-        '&haspic=1': 'pic',
-        '&hasvideo=1': 'vedio',
-        '&haslink=1': 'link'
-    }
-
     def start_requests(self):
         """
         爬虫入口
         """
 
         self.logger.info(
-            f'Search spider start...\n' +
+            'Search spider start...\n' +
             f'--- keyword: {self.keyword}\n' +
             f'--- from: {self.tf}\n' +
             f'--- to: {self.tt}\n' +
@@ -154,6 +141,8 @@ class SearchSpider(Spider):
         """
 
         data = json.loads(response.text)
+        if not data['ok']:
+            raise StopDownload()
         item = parse_tweet_info(data)
         item['keyword'] = response.meta['keyword']
         if item['isLongText']:

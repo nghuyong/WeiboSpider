@@ -3,6 +3,7 @@ from scrapy.exceptions import CloseSpider
 from threading import Lock
 import logging
 from requests import get
+import json
 
 
 logger = logging.getLogger(__name__)
@@ -36,9 +37,17 @@ class CookiePoolMiddleware():
     Cookie池中间件
     """
 
-    pool = []               # Store cookies.
-    i = 0                   # Cookie index, for rotate cookie.
-    cookie_status = {}      # Record cookie failed times.
+    ##### pool structure #####
+    # pool = {
+    #    "cookie name": {                       cookie name in cookies.json
+    #        "cookie": "<cookie example>",      cookie value in cookies.json
+    #        "status": 0                        for record failed times
+    #    }
+    # }
+    ##########################
+    pool = {}
+    ck_names = []           # Cookie names.
+    i = 0                   # Cookie index, for rotate cookie names.
     lock = Lock()           # For concurrent get cookie and modify cookie status.
 
 
@@ -47,24 +56,29 @@ class CookiePoolMiddleware():
         Middleware初始化，加载文件中的所有cookie并测试cookie可用性。
         """
 
-        # Load cookies from file.
-        with open('cookies.txt') as f:
-            cookies = [l.strip() for l in f.readlines()]
+        with open('cookies.json') as f:
+            cookies = json.load(f)
+        for ck_name in cookies.keys():
+            cookie = cookies[ck_name].strip()
+
         # Test cookies available.
-        for cookie in cookies:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:61.0) Gecko/20100101 Firefox/61.0',
                 'Cookie': cookie
             }
             r = get('https://s.weibo.com/weibo?q=123', headers=headers, allow_redirects=False)
             if r.status_code in [302, 301]:
-                logger.warning(f'Cookie not available! - {cookie}')
+                logger.warning(f'Cookie not available! - name: {ck_name}, cookie: {cookie}')
             else:
-                self.pool.append(cookie)
-                self.cookie_status[cookie] = 0
-        logger.info(f'Available cookie count: {len(self.pool)}')
+                self.pool[ck_name] = {'cookie': cookie, 'status': 0}
+                self.ck_names.append(ck_name)
 
-    def get_cookie_b(self) -> bytes:
+        logger.info(f'Available cookie count: {len(self.pool)} - {self.ck_names}')
+        if len(self.pool) == 0:
+            # TODO - If no cookie available in init, exit program.
+            pass
+
+    def get_ck_name(self) -> bytes:
         """
         Cookie pool api
 
@@ -72,25 +86,25 @@ class CookiePoolMiddleware():
         Cookie success for once cookie failure will be reset.
         """
 
-        if not self.pool:
+        if not self.ck_names:
             raise CloseSpider('No cookie available!')
         else:
             cookie = None
             while not cookie:
-                # TODO - Log pool length for every minute.
-                # print(f'[DEBUG] - len(pool)={len(self.pool)}, i={self.i}')
-                cookie = self.pool[self.i]
-                if self.cookie_status[cookie] >= 5:
-                    self.pool.remove(cookie)
-                    logger.warning(f'Cookie removed(expired)! - {cookie}')
+                ck_name = self.ck_names[self.i]
+                cookie = self.pool[ck_name]['cookie']
+                if self.pool[ck_name]['status'] >= 5:
+                    self.pool.pop(ck_name)
+                    self.ck_names.remove(ck_name)
+                    logger.warning(f'Cookie removed(expired)! - name: {ck_name}, cookie: {cookie}')
+                    logger.info(f'Available cookie count: {len(self.pool)}')
                     if not self.pool:
                         raise CloseSpider('No cookie available!')
                     self.i = 0
                     cookie = None
                 else:
                     self.i = (self.i + 1) % len(self.pool)
-            # print(f'[DEBUG] - cookie_now = {cookie_now}')
-            return bytes(cookie, 'utf-8')
+            return ck_name
 
     def process_request(self, request, spider):
         """
@@ -98,7 +112,9 @@ class CookiePoolMiddleware():
         """
 
         with self.lock:
-            request.headers['Cookie'] = self.get_cookie_b()
+            ck_name = self.get_ck_name()
+            request.headers['Cookie'] = bytes(self.pool[ck_name]['cookie'], 'utf-8')
+            request.meta['ck_name'] = ck_name
 
     def process_response(self, request, response, spider):
         """
@@ -109,13 +125,15 @@ class CookiePoolMiddleware():
 
         # TODO - Only check search spider, check others.
         with self.lock:
-            if response.status in [301, 302]:
-                # Cookie expired, request again
-                self.cookie_status[cookie] += 1
-                request.headers['cookie'] = self.get_cookie_b()
+            ck_name = request.meta['ck_name']
+            if response.status in [301, 302, 400]:
+                self.pool[ck_name]['status'] += 1
+                new_ck_name = self.get_ck_name()
+                request.headers['cookie'] = bytes(self.pool[new_ck_name]['cookie'], 'utf-8')
                 request.dont_filter = True
+                request.meta['ck_name'] = new_ck_name
                 return request
             else:
                 # Signal to tell cookie is alive.
-                self.cookie_status[cookie] = 0
+                self.pool[ck_name]['status'] = 0
                 return response

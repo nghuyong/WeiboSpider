@@ -60,7 +60,14 @@ pip install -r requirements.txt
 
 ![](.github/cookie.png)
 
-复制`weibo.com`数据包，network中的cookie值，右键copy value。编辑`weibospider/cookies.txt`并替换成刚刚复制的Cookie。
+复制`weibo.com`数据包，network中的cookie值，右键copy value。编辑`weibospider/cookies.json`，替换成刚刚复制的Cookie，给其命名。
+
+具体来讲，只需要`SUB`值即可：
+```
+{
+  "name": "SUB=_2A25OUHI9DeRhGeBN6VUX9SvEzT-IHXVtux51rDV6PUJbktAKLVCmkW1NRJ24IFM3w0MsIksejOBZJEcAgJZZobMv"
+}
+```
 
 ### 多个cookie（可选）
 微博有较为严格的反爬措施，对单个cookie设置了访问频率限制（大约1次/秒），可收集多个帐号cookie提高爬取效率。

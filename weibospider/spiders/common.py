@@ -112,7 +112,10 @@ def parse_tweet_info(data):
     # 3. consider use reg achieve this goal
     # https://weibo.com/ajax/statuses/show?id=MAfiG5Itl
     if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
-        tweet['video'] = data['page_info']['media_info']['mp4_720p_mp4']
+        if "cards" in data['page_info']:
+            tweet['video'] = data['page_info']["cards"][0]["media_info"]["stream_url"]
+        else:
+            tweet['video'] = data['page_info']['media_info']['mp4_720p_mp4']
     tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
     if 'continue_tag' in data and data['isLongText']:
         tweet['isLongText'] = True
@@ -127,6 +130,7 @@ def parse_long_tweet(response):
     item = response.meta['item']
     # FIXME - KeyError: 'longTextContent'
     # https://weibo.com/ajax/statuses/longtext?id=MA5F3ehqz
+    # https://weibo.com/ajax/statuses/longtext?id=MA7Ypg9hx
     # no problem with browser check, do not know reason
     item['content'] = data['longTextContent']
     yield item
