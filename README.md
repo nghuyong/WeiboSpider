@@ -73,6 +73,8 @@ pip install -r requirements.txt
 
 采集的数据存在`output`文件中，命名为`{spider.name}_{datetime}.jsonl`
 
+使用PyCharm打开项目时报错`Unresolved reference 'spiders'`，请将`weibospider`文件夹标志为`Srouces`。参见[这里](https://stackoverflow.com/a/35553721/11211342)
+
 ### 用户信息采集
 
 ```bash
