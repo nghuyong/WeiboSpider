@@ -11,11 +11,11 @@ from scrapy.http import Request
 from spiders.common import parse_tweet_info, parse_long_tweet
 
 
-class TweetSpider(Spider):
+class TweetSpiderByUserID(Spider):
     """
     用户推文数据采集
     """
-    name = "tweet_spider"
+    name = "tweet_spider_by_user_id"
     base_url = "https://weibo.cn"
 
     def start_requests(self):

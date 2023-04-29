@@ -180,32 +180,6 @@ python run_spider.py follow
 ...
 ```
 
-### 用户的微博采集
-
-```bash
-python run_spider.py tweet
-```
-
-```json
-{
-  "crawl_time": 1666864583,
-  "_id": "4762810834227120",
-  "mblogid": "LqlZNhJFm",
-  "created_at": "2022-04-27 10:20:54",
-  "geo": null,
-  "ip_location": null,
-  "reposts_count": 1907,
-  "comments_count": 1924,
-  "attitudes_count": 12169,
-  "source": "三星Galaxy S22 Ultra",
-  "content": "生于乱世纵横四海，义之所在不计生死，孤勇者陈恭一生当如是。#风起陇西今日开播# #风起陇西#  今晚，恭候你！",
-  "pic_urls": [],
-  "pic_num": 0,
-  "video": "http://f.video.weibocdn.com/o0/CmQEWK1ylx07VAm0nrxe01041200YDIc0E010.mp4?label=mp4_720p&template=1280x720.25.0&ori=0&ps=1CwnkDw1GXwCQx&Expires=1666868183&ssig=RlIeOt286i&KID=unistore,video",
-  "url": "https://weibo.com/1087770692/LqlZNhJFm"
-}
-...
-```
 
 ### 微博评论采集
 
@@ -273,10 +247,75 @@ python run_spider.py repost
 ...
 ```
 
+### 基于推文ID的推文采集
+
+```bash
+python run_spider.py tweet_by_tweet_id
+```
+
+```json
+{
+    "_id": "4762810834227120",
+    "mblogid": "LqlZNhJFm",
+    "created_at": "2022-04-27 10:20:54",
+    "geo": null,
+    "ip_location": null,
+    "reposts_count": 1890,
+    "comments_count": 1924,
+    "attitudes_count": 12167,
+    "source": "三星Galaxy S22 Ultra",
+    "content": "生于乱世纵横四海，义之所在不计生死，孤勇者陈恭一生当如是。#风起陇西今日开播# #风起陇西#  今晚，恭候你！",
+    "pic_urls": [],
+    "pic_num": 0,
+    "isLongText": false,
+    "user": {
+        "_id": "1087770692",
+        "avatar_hd": "https://tvax1.sinaimg.cn/crop.0.0.1080.1080.1024/40d61044ly8gbhxwgy419j20u00u0goc.jpg?KID=imgbed,tva&Expires=1682768013&ssig=r1QurGoc2L",
+        "nick_name": "陈坤",
+        "verified": true,
+        "mbrank": 7,
+        "mbtype": 12,
+        "verified_type": 0
+    },
+    "video": "http://f.video.weibocdn.com/o0/CmQEWK1ylx07VAm0nrxe01041200YDIc0E010.mp4?label=mp4_720p&template=1280x720.25.0&ori=0&ps=1CwnkDw1GXwCQx&Expires=1682760813&ssig=26udcPSXFJ&KID=unistore,video",
+    "url": "https://weibo.com/1087770692/LqlZNhJFm",
+    "crawl_time": 1682757213
+}
+...
+```
+
+### 用户的微博采集
+
+```bash
+python run_spider.py tweet_by_user_id
+```
+
+```json
+{
+  "crawl_time": 1666864583,
+  "_id": "4762810834227120",
+  "mblogid": "LqlZNhJFm",
+  "created_at": "2022-04-27 10:20:54",
+  "geo": null,
+  "ip_location": null,
+  "reposts_count": 1907,
+  "comments_count": 1924,
+  "attitudes_count": 12169,
+  "source": "三星Galaxy S22 Ultra",
+  "content": "生于乱世纵横四海，义之所在不计生死，孤勇者陈恭一生当如是。#风起陇西今日开播# #风起陇西#  今晚，恭候你！",
+  "pic_urls": [],
+  "pic_num": 0,
+  "video": "http://f.video.weibocdn.com/o0/CmQEWK1ylx07VAm0nrxe01041200YDIc0E010.mp4?label=mp4_720p&template=1280x720.25.0&ori=0&ps=1CwnkDw1GXwCQx&Expires=1666868183&ssig=RlIeOt286i&KID=unistore,video",
+  "url": "https://weibo.com/1087770692/LqlZNhJFm"
+}
+...
+```
+
+
 ### 基于关键词的微博检索
 
 ```bash
-python run_spider.py search
+python run_spider.py tweet_by_keyword
 ```
 
 ```json
@@ -333,8 +372,9 @@ python run_spider.py search
 
 ## 更新日志
 
+- 2023.04: 支持针对推文id的推文采集 [#272](https://github.com/nghuyong/WeiboSpider/issues/272)
 - 2022.11: 支持针对单个关键词获取单天超过1200页的检索结果 [#257](https://github.com/nghuyong/WeiboSpider/issues/257)
-- 2022.11: 支持长微博全文的获取
+- 2022.11: 支持长微博全文的获取 []
 - 2022.11: 基于关键词微博搜索支持指定时间范围
 - 2022.10: 添加IP归属地信息的采集，包括用户数据，微博数据和微博评论数据
 - 2022.10: 基于weibo.com站点对项目进行重构

@@ -5,6 +5,7 @@ Author: rightyonghu
 Created Time: 2022/10/24
 """
 import json
+import re
 
 import dateutil.parser
 
@@ -102,6 +103,8 @@ def parse_tweet_info(data):
         'isLongText': False,
         "user": parse_user_info(data['user']),
     }
+    if '</a>' in tweet['source']:
+        tweet['source'] = re.search(r'>(.*?)</a>', tweet['source']).group(1)
     if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
         tweet['video'] = data['page_info']['media_info']['mp4_720p_mp4']
     tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
