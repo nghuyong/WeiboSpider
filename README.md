@@ -374,7 +374,7 @@ python run_spider.py tweet_by_keyword
 
 - 2023.04: 支持针对推文id的推文采集 [#272](https://github.com/nghuyong/WeiboSpider/issues/272)
 - 2022.11: 支持针对单个关键词获取单天超过1200页的检索结果 [#257](https://github.com/nghuyong/WeiboSpider/issues/257)
-- 2022.11: 支持长微博全文的获取 []
+- 2022.11: 支持长微博全文的获取
 - 2022.11: 基于关键词微博搜索支持指定时间范围
 - 2022.10: 添加IP归属地信息的采集，包括用户数据，微博数据和微博评论数据
 - 2022.10: 基于weibo.com站点对项目进行重构
