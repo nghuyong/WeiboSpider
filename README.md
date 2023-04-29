@@ -247,7 +247,7 @@ python run_spider.py repost
 ...
 ```
 
-### 基于推文ID的推文采集
+### 基于微博ID的微博采集
 
 ```bash
 python run_spider.py tweet_by_tweet_id
@@ -284,7 +284,7 @@ python run_spider.py tweet_by_tweet_id
 ...
 ```
 
-### 用户的微博采集
+### 基于用户id的微博采集
 
 ```bash
 python run_spider.py tweet_by_user_id
@@ -312,7 +312,7 @@ python run_spider.py tweet_by_user_id
 ```
 
 
-### 基于关键词的微博检索
+### 基于关键词的微博采集
 
 ```bash
 python run_spider.py tweet_by_keyword
