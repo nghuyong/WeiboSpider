@@ -27,21 +27,31 @@ class TweetSpiderByKeyword(Spider):
         # 这里的时间可替换成实际需要的时间段
         start_time = datetime.datetime(year=2022, month=10, day=1, hour=0)
         end_time = datetime.datetime(year=2022, month=10, day=7, hour=23)
-        time_cur = start_time
-        while time_cur < end_time:
-            _start_time = time_cur.strftime("%Y-%m-%d-%H")
-            _end_time = (time_cur + datetime.timedelta(hours=1)).strftime("%Y-%m-%d-%H")
-            for keyword in keywords:
+        # 是否按照小时进行切分，数据量更大; 对于非热门关键词**不需要**按照小时切分
+        is_split_by_hour = True
+        for keyword in keywords:
+            if not is_split_by_hour:
+                _start_time = start_time.strftime("%Y-%m-%d-%H")
+                _end_time = end_time.strftime("%Y-%m-%d-%H")
                 url = f"https://s.weibo.com/weibo?q={keyword}&timescope=custom%3A{_start_time}%3A{_end_time}&page=1"
-                # 按照热度排序
                 yield Request(url, callback=self.parse, meta={'keyword': keyword})
-            time_cur = time_cur + datetime.timedelta(hours=1)
+            else:
+                time_cur = start_time
+                while time_cur < end_time:
+                    _start_time = time_cur.strftime("%Y-%m-%d-%H")
+                    _end_time = (time_cur + datetime.timedelta(hours=1)).strftime("%Y-%m-%d-%H")
+                    url = f"https://s.weibo.com/weibo?q={keyword}&timescope=custom%3A{_start_time}%3A{_end_time}&page=1"
+                    yield Request(url, callback=self.parse, meta={'keyword': keyword})
+                    time_cur = time_cur + datetime.timedelta(hours=1)
 
     def parse(self, response, **kwargs):
         """
         网页解析
         """
         html = response.text
+        if '<p>抱歉，未找到相关结果。</p>' in html:
+            self.logger.info(f'no search result. url: {response.url}')
+            return
         tweet_ids = re.findall(r'weibo\.com/\d+/(.+?)\?refer_flag=1001030103_" ', html)
         for tweet_id in tweet_ids:
             url = f"https://weibo.com/ajax/statuses/show?id={tweet_id}"
