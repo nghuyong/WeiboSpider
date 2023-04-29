@@ -4,6 +4,7 @@
 Author: rightyonghu
 Created Time: 2022/10/22
 """
+import datetime
 import json
 import re
 from scrapy import Spider, Request
@@ -23,18 +24,18 @@ class TweetSpiderByKeyword(Spider):
         """
         # 这里keywords可替换成实际待采集的数据
         keywords = ['丽江']
-        start_time = "2022-10-01-0"  # 格式为 年-月-日-小时, 2022-10-01-0 表示2022年10月1日0时
-        end_time = "2022-10-07-23"  # 格式为 年-月-日-小时, 2022-10-07-23 表示2022年10月7日23时
-        is_search_with_specific_time_scope = True  # 是否在指定的时间区间进行推文搜索
-        is_sort_by_hot = True  # 是否按照热度排序,默认按照时间排序
-        for keyword in keywords:
-            if is_search_with_specific_time_scope:
-                url = f"https://s.weibo.com/weibo?q={keyword}&timescope=custom%3A{start_time}%3A{end_time}&page=1"
-            else:
-                url = f"https://s.weibo.com/weibo?q={keyword}&page=1"
-            if is_sort_by_hot:
-                url += "&xsort=hot"
-            yield Request(url, callback=self.parse, meta={'keyword': keyword})
+        # 这里的时间可替换成实际需要的时间段
+        start_time = datetime.datetime(year=2022, month=10, day=1, hour=0)
+        end_time = datetime.datetime(year=2022, month=10, day=7, hour=23)
+        time_cur = start_time
+        while time_cur < end_time:
+            _start_time = time_cur.strftime("%Y-%m-%d-%H")
+            _end_time = (time_cur + datetime.timedelta(hours=1)).strftime("%Y-%m-%d-%H")
+            for keyword in keywords:
+                url = f"https://s.weibo.com/weibo?q={keyword}&timescope=custom%3A{_start_time}%3A{_end_time}&page=1"
+                # 按照热度排序
+                yield Request(url, callback=self.parse, meta={'keyword': keyword})
+            time_cur = time_cur + datetime.timedelta(hours=1)
 
     def parse(self, response, **kwargs):
         """
@@ -44,7 +45,7 @@ class TweetSpiderByKeyword(Spider):
         tweet_ids = re.findall(r'weibo\.com/\d+/(.+?)\?refer_flag=1001030103_" ', html)
         for tweet_id in tweet_ids:
             url = f"https://weibo.com/ajax/statuses/show?id={tweet_id}"
-            yield Request(url, callback=self.parse_tweet, meta=response.meta)
+            yield Request(url, callback=self.parse_tweet, meta=response.meta, priority=10)
         next_page = re.search('<a href="(.*?)" class="next">下一页</a>', html)
         if next_page:
             url = "https://s.weibo.com" + next_page.group(1)
@@ -60,6 +61,6 @@ class TweetSpiderByKeyword(Spider):
         item['keyword'] = response.meta['keyword']
         if item['isLongText']:
             url = "https://weibo.com/ajax/statuses/longtext?id=" + item['mblogid']
-            yield Request(url, callback=parse_long_tweet, meta={'item': item})
+            yield Request(url, callback=parse_long_tweet, meta={'item': item}, priority=20)
         else:
             yield item
