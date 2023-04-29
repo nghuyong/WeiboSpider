@@ -106,7 +106,13 @@ def parse_tweet_info(data):
     if '</a>' in tweet['source']:
         tweet['source'] = re.search(r'>(.*?)</a>', tweet['source']).group(1)
     if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
-        tweet['video'] = data['page_info']['media_info']['mp4_720p_mp4']
+        media_info = None
+        if 'media_info' in data['page_info']:
+            media_info = data['page_info']['media_info']
+        elif 'cards' in data['page_info'] and 'media_info' in data['page_info']['cards'][0]:
+            media_info = data['page_info']['cards'][0]['media_info']
+        if media_info:
+            tweet['video'] = media_info['stream_url']
     tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
     if 'continue_tag' in data and data['isLongText']:
         tweet['isLongText'] = True
