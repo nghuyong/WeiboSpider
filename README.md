@@ -284,7 +284,7 @@ python run_spider.py tweet_by_tweet_id
 ...
 ```
 
-### 基于用户id的微博采集
+### 基于用户ID的微博采集
 
 ```bash
 python run_spider.py tweet_by_user_id
