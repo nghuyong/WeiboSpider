@@ -13,7 +13,7 @@ class JsonWriterPipeline(object):
     """
 
     def __init__(self):
-        self.client = pymongo.MongoClient('127.0.0.1', 27017)
+        self.client = pymongo.MongoClient(os.environ.get('IP'), 27017)
         self.collection = self.client['weibo']["relationships"]
 
     def process_item(self, item, spider):
