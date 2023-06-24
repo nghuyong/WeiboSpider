@@ -4,6 +4,8 @@ import json
 import os.path
 import time
 
+import pymongo
+
 
 class JsonWriterPipeline(object):
     """
@@ -11,20 +13,15 @@ class JsonWriterPipeline(object):
     """
 
     def __init__(self):
-        self.file = None
-        if not os.path.exists('../output'):
-            os.mkdir('../output')
+        self.client = pymongo.MongoClient('127.0.0.1', 27017)
+        self.collection = self.client['weibo']["relationships"]
 
     def process_item(self, item, spider):
         """
         处理item
         """
-        if not self.file:
-            now = datetime.datetime.now()
-            file_name = spider.name + "_" + now.strftime("%Y%m%d%H%M%S") + '.jsonl'
-            self.file = open(f'../output/{file_name}', 'wt', encoding='utf-8')
-        item['crawl_time'] = int(time.time())
-        line = json.dumps(dict(item), ensure_ascii=False) + "\n"
-        self.file.write(line)
-        self.file.flush()
+        try:
+            self.collection.insert_one(item)
+        except:
+            pass
         return item
