@@ -91,7 +91,7 @@ def parse_tweet_info(data):
         "_id": str(data['mid']),
         "mblogid": data['mblogid'],
         "created_at": parse_time(data['created_at']),
-        "geo": data['geo'],
+        "geo": data.get('geo', None),
         "ip_location": data.get('region_name', None),
         "reposts_count": data['reposts_count'],
         "comments_count": data['comments_count'],
