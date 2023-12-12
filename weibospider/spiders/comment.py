@@ -37,7 +37,12 @@ class CommentSpider(Spider):
         for comment_info in data['data']:
             item = self.parse_comment(comment_info)
             yield item
-        if data.get('max_id', 0) != 0:
+            # 解析二级评论
+            if 'more_info' in comment_info:
+                url = f"https://weibo.com/ajax/statuses/buildComments?is_reload=1&id={comment_info['id']}" \
+                      f"&is_show_bulletin=2&is_mix=1&fetch_level=1&max_id=0&count=100"
+                yield Request(url, callback=self.parse, priority=20)
+        if data.get('max_id', 0) != 0 and 'fetch_level=1' not in response.url:
             url = response.meta['source_url'] + '&max_id=' + str(data['max_id'])
             yield Request(url, callback=self.parse, meta=response.meta)
 
@@ -53,4 +58,10 @@ class CommentSpider(Spider):
         item['ip_location'] = data.get('source', '')
         item['content'] = data['text_raw']
         item['comment_user'] = parse_user_info(data['user'])
+        if 'reply_comment' in data:
+            item['reply_comment'] = {
+                '_id': data['reply_comment']['id'],
+                'text': data['reply_comment']['text'],
+                'user': parse_user_info(data['reply_comment']['user']),
+            }
         return item
