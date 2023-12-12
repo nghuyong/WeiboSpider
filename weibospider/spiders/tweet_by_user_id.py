@@ -5,7 +5,10 @@ Author: nghuyong
 Mail: nghuyong@163.com
 Created Time: 2020/4/14
 """
+import datetime
 import json
+import re
+
 from scrapy import Spider
 from scrapy.http import Request
 from spiders.common import parse_tweet_info, parse_long_tweet
@@ -16,7 +19,6 @@ class TweetSpiderByUserID(Spider):
     用户推文数据采集
     """
     name = "tweet_spider_by_user_id"
-    base_url = "https://weibo.cn"
 
     def start_requests(self):
         """
@@ -24,8 +26,16 @@ class TweetSpiderByUserID(Spider):
         """
         # 这里user_ids可替换成实际待采集的数据
         user_ids = ['1087770692']
+        # 这里的时间替换成实际需要的时间段，如果要采集用户全部推文 is_split_by_hour 设置为False
+        is_split_by_hour = True
+        start_time = datetime.datetime(year=2022, month=1, day=1)
+        end_time = datetime.datetime(year=2023, month=1, day=1)
         for user_id in user_ids:
-            url = f"https://weibo.com/ajax/statuses/mymblog?uid={user_id}&page=1"
+            url = f"https://weibo.com/ajax/statuses/searchProfile?uid={user_id}&page=1&hasori=1&hastext=1&haspic=1&hasvideo=1&hasmusic=1&hasret=1"
+            if is_split_by_hour:
+                start_time = int(start_time.timestamp())
+                end_time = int(end_time.timestamp())
+                url += f'&starttime={start_time}&endtime={end_time}'
             yield Request(url, callback=self.parse, meta={'user_id': user_id, 'page_num': 1})
 
     def parse(self, response, **kwargs):
@@ -44,6 +54,5 @@ class TweetSpiderByUserID(Spider):
                 yield item
         if tweets:
             user_id, page_num = response.meta['user_id'], response.meta['page_num']
-            page_num += 1
-            url = f"https://weibo.com/ajax/statuses/mymblog?uid={user_id}&page={page_num}"
-            yield Request(url, callback=self.parse, meta={'user_id': user_id, 'page_num': page_num})
+            url = response.url.replace(f'page={page_num}', f'page={page_num + 1}')
+            yield Request(url, callback=self.parse, meta={'user_id': user_id, 'page_num': page_num + 1})
