@@ -27,12 +27,12 @@ class TweetSpiderByUserID(Spider):
         # 这里user_ids可替换成实际待采集的数据
         user_ids = ['1087770692']
         # 这里的时间替换成实际需要的时间段，如果要采集用户全部推文 is_split_by_hour 设置为False
-        is_split_by_hour = True
+        is_crawl_specific_time_span = True
         start_time = datetime.datetime(year=2022, month=1, day=1)
         end_time = datetime.datetime(year=2023, month=1, day=1)
         for user_id in user_ids:
             url = f"https://weibo.com/ajax/statuses/searchProfile?uid={user_id}&page=1&hasori=1&hastext=1&haspic=1&hasvideo=1&hasmusic=1&hasret=1"
-            if is_split_by_hour:
+            if is_crawl_specific_time_span:
                 start_time = int(start_time.timestamp())
                 end_time = int(end_time.timestamp())
                 url += f'&starttime={start_time}&endtime={end_time}'
