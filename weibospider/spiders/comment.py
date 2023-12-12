@@ -50,7 +50,7 @@ class CommentSpider(Spider):
         item['created_at'] = parse_time(data['created_at'])
         item['_id'] = data['id']
         item['like_counts'] = data['like_counts']
-        item['ip_location'] = data['source']
+        item['ip_location'] = data.get('source', '')
         item['content'] = data['text_raw']
         item['comment_user'] = parse_user_info(data['user'])
         return item
