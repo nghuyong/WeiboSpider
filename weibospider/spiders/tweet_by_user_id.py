@@ -33,9 +33,7 @@ class TweetSpiderByUserID(Spider):
         for user_id in user_ids:
             url = f"https://weibo.com/ajax/statuses/searchProfile?uid={user_id}&page=1&hasori=1&hastext=1&haspic=1&hasvideo=1&hasmusic=1&hasret=1"
             if is_crawl_specific_time_span:
-                start_time = int(start_time.timestamp())
-                end_time = int(end_time.timestamp())
-                url += f'&starttime={start_time}&endtime={end_time}'
+                url += f'&starttime={int(start_time.timestamp())}&endtime={int(end_time.timestamp())}'
             yield Request(url, callback=self.parse, meta={'user_id': user_id, 'page_num': 1})
 
     def parse(self, response, **kwargs):
