@@ -101,6 +101,7 @@ def parse_tweet_info(data):
         "pic_urls": ["https://wx1.sinaimg.cn/orj960/" + pic_id for pic_id in data.get('pic_ids', [])],
         "pic_num": data['pic_num'],
         'isLongText': False,
+        'is_retweet': False,
         "user": parse_user_info(data['user']),
     }
     if '</a>' in tweet['source']:
@@ -116,6 +117,9 @@ def parse_tweet_info(data):
     tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
     if 'continue_tag' in data and data['isLongText']:
         tweet['isLongText'] = True
+    if 'retweeted_status' in data:
+        tweet['is_retweet'] = True
+        tweet['retweet_id'] = data['retweeted_status']['mid']
     return tweet
 
 

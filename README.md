@@ -372,6 +372,7 @@ python run_spider.py tweet_by_keyword
 
 ## 更新日志
 
+- 2024.01: 支持转发推文溯源到原推文 [#314](https://github.com/nghuyong/WeiboSpider/issues/314)
 - 2023.12: 支持采集推文的二级评论 [#302](https://github.com/nghuyong/WeiboSpider/issues/302)
 - 2023.12: 支持采集指定时间段的用户推文 [#308](https://github.com/nghuyong/WeiboSpider/issues/308)
 - 2023.04: 支持针对推文id的推文采集 [#272](https://github.com/nghuyong/WeiboSpider/issues/272)
