@@ -114,6 +114,8 @@ def parse_tweet_info(data):
             media_info = data['page_info']['cards'][0]['media_info']
         if media_info:
             tweet['video'] = media_info['stream_url']
+            # 视频播放量
+            tweet['video_online_numbers'] = media_info.get('online_users_number', None)
     tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
     if 'continue_tag' in data and data['isLongText']:
         tweet['isLongText'] = True
