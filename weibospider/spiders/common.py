@@ -122,6 +122,8 @@ def parse_tweet_info(data):
     if 'retweeted_status' in data:
         tweet['is_retweet'] = True
         tweet['retweet_id'] = data['retweeted_status']['mid']
+    if 'reads_count' in data:
+        tweet['reads_count'] = data['reads_count']
     return tweet
 
 
