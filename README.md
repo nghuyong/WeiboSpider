@@ -49,7 +49,7 @@
 ### 拉取&&安装
 
 ```bash
-git clone https://github.com/nghuyong/WeiboSpider.git --depth 1 --no-single-branch
+git clone https://github.com/nghuyong/WeiboSpider.git --depth 1 
 cd WeiboSpider
 pip install -r requirements.txt
 ```
