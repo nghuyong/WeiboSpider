@@ -1,6 +1,6 @@
 <p align="center">
     <br>
-    <img src="./.github/weibospider.png" width="400"/>
+    <img src=".github/images/weibospider.png" width="400"/>
     <br>
 <p>
 <p align="center">
@@ -58,7 +58,7 @@ pip install -r requirements.txt
 
 访问[https://weibo.com/](https://weibo.com/)， 登陆账号，打开浏览器的开发者模式，再次刷新
 
-![](.github/cookie.png)
+![](.github/images/cookie.png)
 
 复制`weibo.com`数据包，network中的cookie值。编辑`weibospider/cookie.txt`并替换成刚刚复制的Cookie
 
