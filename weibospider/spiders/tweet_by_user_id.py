@@ -32,9 +32,17 @@ class TweetSpiderByUserID(Spider):
         end_time = datetime.datetime(year=2023, month=1, day=1)
         for user_id in user_ids:
             url = f"https://weibo.com/ajax/statuses/searchProfile?uid={user_id}&page=1&hasori=1&hastext=1&haspic=1&hasvideo=1&hasmusic=1&hasret=1"
-            if is_crawl_specific_time_span:
-                url += f'&starttime={int(start_time.timestamp())}&endtime={int(end_time.timestamp())}'
-            yield Request(url, callback=self.parse, meta={'user_id': user_id, 'page_num': 1})
+            if not is_crawl_specific_time_span:
+                yield Request(url, callback=self.parse, meta={'user_id': user_id, 'page_num': 1})
+            else:
+                # 切分成10天进行
+                tmp_start_time = start_time
+                while tmp_start_time <= end_time:
+                    tmp_end_time = tmp_start_time + datetime.timedelta(days=10)
+                    tmp_end_time = min(tmp_end_time, end_time)
+                    tmp_url = url + f'&starttime={int(tmp_start_time.timestamp())}&endtime={int(tmp_end_time.timestamp())}'
+                    yield Request(tmp_url, callback=self.parse, meta={'user_id': user_id, 'page_num': 1})
+                    tmp_start_time = tmp_end_time + datetime.timedelta(days=1)
 
     def parse(self, response, **kwargs):
         """
