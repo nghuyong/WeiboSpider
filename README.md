@@ -384,6 +384,24 @@ python run_spider.py tweet_by_keyword
 - 2022.10: 添加IP归属地信息的采集，包括用户数据，微博数据和微博评论数据
 - 2022.10: 基于weibo.com站点对项目进行重构
 
+## 引用
+```
+@inproceedings{hu-etal-2020-weibo,
+    title = "{W}eibo-{COV}: A Large-Scale {COVID}-19 Social Media Dataset from {W}eibo",
+    author = "Hu, Yong  and
+      Huang, Heyan  and
+      Chen, Anfan  and
+      Mao, Xian-Ling",
+    booktitle = "Proceedings of the 1st Workshop on {NLP} for {COVID}-19 (Part 2) at {EMNLP} 2020",
+    month = dec,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/2020.nlpcovid19-2.34",
+    doi = "10.18653/v1/2020.nlpcovid19-2.34",
+}
+```
+
 ## 其他工作
 
 - 已构建超大规模数据集WeiboCOV，可免费申请，包含2千万微博活跃用户以及6千万推文数据，参见[这里](https://github.com/nghuyong/weibo-public-opinion-datasets)
