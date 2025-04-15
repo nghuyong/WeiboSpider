@@ -1,4 +1,4 @@
-<p align="center">
+![image](https://github.com/user-attachments/assets/6520abb9-7773-4b1a-8a74-4b3293d1b997)![image](https://github.com/user-attachments/assets/83655d05-aa26-431d-9d41-ead7be38bfa2)<p align="center">
     <br>
     <img src="./.github/weibospider.png" width="400"/>
     <br>
@@ -65,7 +65,14 @@ pip install -r requirements.txt
 ### 添加代理IP(可选)
 
 重写[fetch_proxy](./weibospider/middlewares.py#6L)
-方法，该方法需要返回一个代理ip，具体参考[这里](https://github.com/nghuyong/WeiboSpider/issues/124#issuecomment-654335439)
+方法，该方法需要返回一个代理ip，具体代码参考[这里](https://github.com/nghuyong/WeiboSpider/issues/124#issuecomment-654335439)
+
+推荐代理:Swiftproxy [链接](https://www.swiftproxy.net/?ref=hy)  **注册可领500MB免费测试流量，使用折扣码“GHB5”立享九折优惠！**
+
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/504572dd-9ea3-44bb-ace5-f655938cdc0a" />
+
+
+
 
 ## 运行程序
 
