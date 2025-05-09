@@ -23,10 +23,10 @@ class TweetSpiderByKeyword(Spider):
         爬虫入口
         """
         # 这里keywords可替换成实际待采集的数据
-        keywords = ['丽江']
+        keywords = ['房价']
         # 这里的时间可替换成实际需要的时间段
-        start_time = datetime.datetime(year=2022, month=10, day=1, hour=0)
-        end_time = datetime.datetime(year=2022, month=10, day=7, hour=23)
+        start_time = datetime.datetime(year=2020, month=1, day=1, hour=0)
+        end_time = datetime.datetime(year=2023, month=12, day=31, hour=23)
         # 是否按照小时进行切分，数据量更大; 对于非热门关键词**不需要**按照小时切分
         is_split_by_hour = True
         for keyword in keywords:
