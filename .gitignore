@@ -1,0 +1,5 @@
+venv/
+output/
+weibospider.log
+weibo_spider.log
+__pycache__/
