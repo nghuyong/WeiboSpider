@@ -28,12 +28,6 @@ class TweetSpiderByKeyword(Spider):
     """
     name = "tweet_spider_by_keyword"
     base_url = "https://s.weibo.com/"
-    custom_settings = {
-        'DOWNLOAD_DELAY': 2,
-        'CONCURRENT_REQUESTS': 5,
-        'RETRY_TIMES': 3,
-        'RETRY_HTTP_CODES': [500, 502, 503, 504, 522, 524, 408, 429],
-    }
 
     def start_requests(self):
         """
