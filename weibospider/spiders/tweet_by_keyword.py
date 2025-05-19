@@ -41,9 +41,9 @@ class TweetSpiderByKeyword(Spider):
         """
         # 这里keywords可替换成实际待采集的数据
         keywords = ['房价']
-        # 这里的时间可替换成实际需要的时间段
-        end_time = datetime.datetime.now()
-        start_time = end_time - datetime.timedelta(days=3*365)
+        # 设置固定的时间范围：2020.01.01 - 2023.06.30
+        start_time = datetime.datetime(2020, 1, 1)
+        end_time = datetime.datetime(2023, 6, 30, 23, 59, 59)
         
         logger.info(f"Starting spider for keywords: {keywords}")
         logger.info(f"Time range: {start_time} to {end_time}")
