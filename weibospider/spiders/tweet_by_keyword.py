@@ -42,7 +42,7 @@ class TweetSpiderByKeyword(Spider):
         # 这里keywords可替换成实际待采集的数据
         keywords = ['房价']
         # 设置固定的时间范围：2020.01.01 - 2023.06.30
-        start_time = datetime.datetime(2020, 1, 1)
+        start_time = datetime.datetime(2020, 1, 1, 0, 0, 0)
         end_time = datetime.datetime(2023, 6, 30, 23, 59, 59)
         
         logger.info(f"Starting spider for keywords: {keywords}")
