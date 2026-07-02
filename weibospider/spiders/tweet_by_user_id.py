@@ -11,7 +11,7 @@ import re
 
 from scrapy import Spider
 from scrapy.http import Request
-from spiders.common import parse_tweet_info, parse_long_tweet
+from .common import parse_tweet_info, parse_long_tweet
 
 
 class TweetSpiderByUserID(Spider):
@@ -25,7 +25,7 @@ class TweetSpiderByUserID(Spider):
         爬虫入口
         """
         # 这里user_ids可替换成实际待采集的数据
-        user_ids = ['1087770692']
+        user_ids = ['1749127163']  # 雷军的用户ID
         # 这里的时间替换成实际需要的时间段，如果要采集用户全部推文 is_crawl_specific_time_span 设置为False
         is_crawl_specific_time_span = True
         start_time = datetime.datetime(year=2022, month=1, day=1)

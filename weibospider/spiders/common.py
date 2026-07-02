@@ -61,70 +61,89 @@ def parse_user_info(data):
     """
     解析用户信息
     """
-    # 基础信息
-    user = {
-        "_id": str(data['id']),
-        "avatar_hd": data['avatar_hd'],
-        "nick_name": data['screen_name'],
-        "verified": data['verified'],
-    }
-    # 额外的信息
-    keys = ['description', 'followers_count', 'friends_count', 'statuses_count',
-            'gender', 'location', 'mbrank', 'mbtype', 'credit_score']
-    for key in keys:
-        if key in data:
-            user[key] = data[key]
-    if 'created_at' in data:
-        user['created_at'] = parse_time(data.get('created_at'))
-    if user['verified']:
-        user['verified_type'] = data['verified_type']
-        if 'verified_reason' in data:
-            user['verified_reason'] = data['verified_reason']
-    return user
+    try:
+        # 基本信息
+        user = {
+            "_id": str(data.get('id', '')),     
+            "avatar_hd": data.get('avatar_hd', ''),
+            "nick_name": data.get('screen_name', ''),
+            "verified": data.get('verified', False),
+        }
+        # 额外的信息
+        keys = ['description', 'followers_count', 'friends_count', 'statuses_count',
+                'gender', 'location', 'mbrank', 'mbtype', 'credit_score']   
+        for key in keys:
+            if key in data:
+                user[key] = data[key]   
+        if 'created_at' in data:        
+            try:
+                user['created_at'] = parse_time(data.get('created_at'))
+            except Exception:
+                user['created_at'] = data.get('created_at', '')
+        if user['verified']:
+            user['verified_type'] = data.get('verified_type', 0)
+            if 'verified_reason' in data:
+                user['verified_reason'] = data['verified_reason']
+        return user
+    except Exception as e:
+        print(f"Error parsing user info: {e}")
+        return {}
 
 
 def parse_tweet_info(data):
     """
     解析推文数据
     """
-    tweet = {
-        "_id": str(data['mid']),
-        "mblogid": data['mblogid'],
-        "created_at": parse_time(data['created_at']),
-        "geo": data.get('geo', None),
-        "ip_location": data.get('region_name', None),
-        "reposts_count": data['reposts_count'],
-        "comments_count": data['comments_count'],
-        "attitudes_count": data['attitudes_count'],
-        "source": data['source'],
-        "content": data['text_raw'].replace('\u200b', ''),
-        "pic_urls": ["https://wx1.sinaimg.cn/orj960/" + pic_id for pic_id in data.get('pic_ids', [])],
-        "pic_num": data['pic_num'],
-        'isLongText': False,
-        'is_retweet': False,
-        "user": parse_user_info(data['user']),
-    }
-    if '</a>' in tweet['source']:
-        tweet['source'] = re.search(r'>(.*?)</a>', tweet['source']).group(1)
-    if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
-        media_info = None
-        if 'media_info' in data['page_info']:
-            media_info = data['page_info']['media_info']
-        elif 'cards' in data['page_info'] and 'media_info' in data['page_info']['cards'][0]:
-            media_info = data['page_info']['cards'][0]['media_info']
-        if media_info:
-            tweet['video'] = media_info['stream_url']
-            # 视频播放量
-            tweet['video_online_numbers'] = media_info.get('online_users_number', None)
-    tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
-    if 'continue_tag' in data and data['isLongText']:
-        tweet['isLongText'] = True
-    if 'retweeted_status' in data:
-        tweet['is_retweet'] = True
-        tweet['retweet_id'] = data['retweeted_status']['mid']
-    if 'reads_count' in data:
-        tweet['reads_count'] = data['reads_count']
-    return tweet
+    try:
+        tweet = {
+            "_id": str(data.get('mid', '')),
+            "mblogid": data.get('mblogid', ''),
+            "created_at": parse_time(data.get('created_at')) if 'created_at' in data else '',
+            "geo": data.get('geo', None),
+            "ip_location": data.get('region_name', None),
+            "reposts_count": data.get('reposts_count', 0),
+            "comments_count": data.get('comments_count', 0),
+            "attitudes_count": data.get('attitudes_count', 0),
+            "source": data.get('source', ''),
+            "content": data.get('text_raw', '').replace('\u200b', ''),
+            "pic_urls": ["https://wx1.sinaimg.cn/orj960/" + pic_id for pic_id in data.get('pic_ids', [])],
+            "pic_num": data.get('pic_num', 0),
+            'isLongText': False,
+            'is_retweet': False,
+            "user": parse_user_info(data.get('user', {})) if 'user' in data else {},
+        }
+        if '</a>' in tweet['source']:
+            try:
+                tweet['source'] = re.search(r'>(.*?)</a>', tweet['source']).group(1)
+            except Exception:
+                pass
+        if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
+            media_info = None
+            if 'media_info' in data['page_info']:
+                media_info = data['page_info']['media_info']
+            elif 'cards' in data['page_info'] and len(data['page_info']['cards']) > 0 and 'media_info' in data['page_info']['cards'][0]:
+                media_info = data['page_info']['cards'][0]['media_info']
+            if media_info:
+                tweet['video'] = media_info.get('stream_url', '')
+                # 视频播放量
+                tweet['video_online_numbers'] = media_info.get('online_users_number', None)
+        if 'user' in data and data['user'].get('id') and data.get('mblogid'):
+            tweet['url'] = f"https://weibo.com/{data['user']['id']}/{data['mblogid']}"
+        elif tweet['user'].get('_id') and tweet['mblogid']:
+            tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
+        if 'continue_tag' in data and data.get('isLongText'):
+            tweet['isLongText'] = True
+        if 'retweeted_status' in data:
+            tweet['is_retweet'] = True
+            tweet['retweet_id'] = data['retweeted_status'].get('mid', '')
+        if 'reads_count' in data:
+            tweet['reads_count'] = data['reads_count']
+        return tweet
+    except Exception as e:
+        print(f"Error parsing tweet info: {e}")
+        import traceback
+        traceback.print_exc()
+        return {}
 
 
 def parse_long_tweet(response):

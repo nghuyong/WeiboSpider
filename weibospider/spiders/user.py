@@ -8,7 +8,7 @@ Created Time: 2020/4/14
 import json
 from scrapy import Spider
 from scrapy.http import Request
-from spiders.common import parse_user_info
+from .common import parse_user_info
 
 
 class UserSpider(Spider):
@@ -32,10 +32,38 @@ class UserSpider(Spider):
         """
         网页解析
         """
-        data = json.loads(response.text)
-        item = parse_user_info(data['data']['user'])
-        url = f"https://weibo.com/ajax/profile/detail?uid={item['_id']}"
-        yield Request(url, callback=self.parse_detail, meta={'item': item})
+        try:
+            self.logger.info(f"Response status: {response.status}")
+            self.logger.info(f"Response text: {response.text[:500]}...")  # 只显示前500个字符
+            
+            data = json.loads(response.text)
+            self.logger.info(f"Parsed data keys: {list(data.keys())}")
+            
+            if 'data' in data:
+                self.logger.info(f"Data keys: {list(data['data'].keys())}")
+                if 'user' in data['data']:
+                    user_data = data['data']['user']
+                    self.logger.info(f"User data keys: {list(user_data.keys())}")
+                    
+                    try:
+                        item = parse_user_info(user_data)
+                        self.logger.info(f"Parsed user item: {item}")
+                        
+                        url = f"https://weibo.com/ajax/profile/detail?uid={item['_id']}"
+                        yield Request(url, callback=self.parse_detail, meta={'item': item})
+                    except Exception as e:
+                        self.logger.error(f"Error parsing user info: {e}")
+                        import traceback
+                        self.logger.error(traceback.format_exc())
+                else:
+                    self.logger.error("No 'user' in response data")
+            else:
+                self.logger.error("No 'data' in response")
+        except Exception as e:
+            self.logger.error(f"Error parsing response: {e}")
+            self.logger.error(f"Full response text: {response.text}")
+            import traceback
+            self.logger.error(traceback.format_exc())
 
     @staticmethod
     def parse_detail(response):
