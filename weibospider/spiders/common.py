@@ -12,7 +12,7 @@ import dateutil.parser
 
 
 def build_search_url(keyword, start_time, end_time):
-    """构造关键词搜索 URL，时间格式为 YYYY-MM-DD-HH。"""
+    """构造关键词搜索 URL，时间格式为 YYYY-MM-DD-HH."""
     query = urlencode({
         'q': keyword,
         'timescope': f'custom:{start_time}:{end_time}',
