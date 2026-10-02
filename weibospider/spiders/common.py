@@ -6,8 +6,19 @@ Created Time: 2022/10/24
 """
 import json
 import re
+from urllib.parse import urlencode
 
 import dateutil.parser
+
+
+def build_search_url(keyword, start_time, end_time):
+    """构造关键词搜索 URL，时间格式为 YYYY-MM-DD-HH."""
+    query = urlencode({
+        'q': keyword,
+        'timescope': f'custom:{start_time}:{end_time}',
+        'page': 1,
+    })
+    return f'https://s.weibo.com/weibo?{query}'
 
 
 def base62_decode(string):

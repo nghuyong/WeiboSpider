@@ -8,7 +8,7 @@ import datetime
 import json
 import re
 from scrapy import Spider, Request
-from spiders.common import parse_tweet_info, parse_long_tweet
+from spiders.common import build_search_url, parse_tweet_info, parse_long_tweet
 
 
 class TweetSpiderByKeyword(Spider):
@@ -33,14 +33,14 @@ class TweetSpiderByKeyword(Spider):
             if not is_split_by_hour:
                 _start_time = start_time.strftime("%Y-%m-%d-%H")
                 _end_time = end_time.strftime("%Y-%m-%d-%H")
-                url = f"https://s.weibo.com/weibo?q={keyword}&timescope=custom%3A{_start_time}%3A{_end_time}&page=1"
+                url = build_search_url(keyword, _start_time, _end_time)
                 yield Request(url, callback=self.parse, meta={'keyword': keyword})
             else:
                 time_cur = start_time
                 while time_cur < end_time:
                     _start_time = time_cur.strftime("%Y-%m-%d-%H")
                     _end_time = (time_cur + datetime.timedelta(hours=1)).strftime("%Y-%m-%d-%H")
-                    url = f"https://s.weibo.com/weibo?q={keyword}&timescope=custom%3A{_start_time}%3A{_end_time}&page=1"
+                    url = build_search_url(keyword, _start_time, _end_time)
                     yield Request(url, callback=self.parse, meta={'keyword': keyword})
                     time_cur = time_cur + datetime.timedelta(hours=1)
 
